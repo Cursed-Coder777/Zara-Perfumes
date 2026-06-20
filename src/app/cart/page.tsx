@@ -5,17 +5,11 @@
 import { api } from "~/trpc/react";
 // Import useSession to check if the user is authenticated before showing cart
 import { useSession } from "~/lib/use-session";
-// Import useRouter for navigation after mutations
-import { useRouter } from "next/navigation";
 // Import Link for client-side navigation to auth and product pages
 import Link from "next/link";
-// Import useState for any local UI state (though this page uses minimal state)
-import { useState } from "react";
 
 // CartPage displays the user's shopping cart with item list, quantity controls, order summary, and checkout link
 export default function CartPage() {
-  // Initialize the Next.js router for potential programmatic navigation
-  const router = useRouter();
   // Fetch the current session — cart data only loads when the user is authenticated
   const { data: session } = useSession();
   // Query the user's cart items via tRPC; only enabled when a session exists
@@ -105,6 +99,7 @@ export default function CartPage() {
                     {/* Product thumbnail image or placeholder Z logo */}
                     <div className="w-24 h-32 bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 overflow-hidden">
                       {item.product.images[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={item.product.images[0]}
                           alt={item.product.name}

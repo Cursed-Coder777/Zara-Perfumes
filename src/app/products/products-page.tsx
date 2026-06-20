@@ -1,8 +1,8 @@
 // Mark this component as a Client Component so it can use client-side routing and state for filtering
 "use client";
 
-// Import useState for potential local state (not directly used but available) and useMemo for filtering products
-import { useState, useMemo } from "react";
+// Import useMemo for filtering products
+import { useMemo } from "react";
 // Import useRouter and useSearchParams for reading URL query parameters and pushing filter updates
 import { useRouter, useSearchParams } from "next/navigation";
 // Import the ProductCard component to render each product in the grid

@@ -7,15 +7,11 @@ import { useState } from "react";
 import { api } from "~/trpc/react";
 // Import the useSession hook to get the current user's session and check admin role
 import { useSession } from "~/lib/use-session";
-// Import useRouter for programmatic navigation after actions
-import { useRouter } from "next/navigation";
 // Import Link for client-side navigation back to the auth page
 import Link from "next/link";
 
 // AdminPage is the admin dashboard — a client component that checks auth/role then shows a tabbed interface for managing products and orders
 export default function AdminPage() {
-  // Initialize the Next.js router for potential redirects
-  const router = useRouter();
   // Fetch the current session to determine if the user is authenticated and has admin role
   const { data: session } = useSession();
   // State variable to toggle between the "products" and "orders" admin tabs
@@ -98,10 +94,6 @@ export default function AdminPage() {
 function AdminProducts() {
   // Query all products from the admin-only tRPC endpoint
   const { data: products, isLoading } = api.admin.products.list.useQuery();
-  // State to track which product's edit form is open (unused in current implementation but reserved for inline editing)
-  const [editingId, setEditingId] = useState<number | null>(null);
-  // Get the tRPC utility object for cache invalidation after mutations
-  const utils = api.useUtils();
 
   // Show a loading indicator while the products query is fetching
   if (isLoading) {

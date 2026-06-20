@@ -72,6 +72,7 @@ export default function ProductDetailPage() {
           {/* Product image placeholder or actual image with a 3:4 aspect ratio */}
           <div className="aspect-[3/4] bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
             {product.images[0] ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={product.images[0]}
                 alt={product.name}

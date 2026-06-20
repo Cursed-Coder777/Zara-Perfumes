@@ -16,6 +16,8 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
+    // Base URL for better-auth (e.g., http://localhost:3000 or https://your-domain.vercel.app)
+    BETTER_AUTH_URL: z.string().url(),
     // GitHub OAuth app client ID for social login
     BETTER_AUTH_GITHUB_CLIENT_ID: z.string(),
     // GitHub OAuth app client secret for social login
@@ -54,6 +56,7 @@ export const env = createEnv({
   // Manually map runtime environment variables because process.env can't be destructured in edge runtimes
   runtimeEnv: {
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     BETTER_AUTH_GITHUB_CLIENT_ID: process.env.BETTER_AUTH_GITHUB_CLIENT_ID,
     BETTER_AUTH_GITHUB_CLIENT_SECRET:
       process.env.BETTER_AUTH_GITHUB_CLIENT_SECRET,

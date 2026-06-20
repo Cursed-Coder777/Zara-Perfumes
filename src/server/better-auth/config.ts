@@ -10,6 +10,8 @@ import { db } from "~/server/db";
 
 // Create and export the central better-auth instance that powers all authentication features
 export const auth = betterAuth({
+  // Use the BETTER_AUTH_URL env var so OAuth callbacks and redirects work in every deployment environment
+  baseURL: env.BETTER_AUTH_URL,
   // Wire up the database using the Drizzle adapter with PostgreSQL as the database provider
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -59,17 +61,17 @@ export const auth = betterAuth({
   },
   // Configure OAuth social providers for one-click login
   socialProviders: {
-    // GitHub OAuth app configuration with client ID, secret, and the local callback URL
+    // GitHub OAuth app configuration with client ID, secret, and the dynamic callback URL
     github: {
       clientId: env.BETTER_AUTH_GITHUB_CLIENT_ID,
       clientSecret: env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
-      redirectURI: "http://localhost:3000/api/auth/callback/github",
+      redirectURI: `${env.BETTER_AUTH_URL}/api/auth/callback/github`,
     },
-    // Google OAuth app configuration with client ID, secret, and the local callback URL
+    // Google OAuth app configuration with client ID, secret, and the dynamic callback URL
     google: {
       clientId: env.BETTER_AUTH_GOOGLE_CLIENT_ID,
       clientSecret: env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
-      redirectURI: "http://localhost:3000/api/auth/callback/google",
+      redirectURI: `${env.BETTER_AUTH_URL}/api/auth/callback/google`,
     },
   },
 });

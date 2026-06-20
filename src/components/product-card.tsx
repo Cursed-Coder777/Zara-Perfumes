@@ -22,6 +22,7 @@ export function ProductCard({ name, slug, price, images, scentNotes }: ProductCa
       {/* Product image container with 3:4 aspect ratio and a hover zoom effect */}
       <div className="aspect-[3/4] bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
         {images[0] ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={images[0]}
             alt={name}

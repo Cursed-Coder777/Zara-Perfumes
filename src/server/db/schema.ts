@@ -3,13 +3,11 @@ import { relations } from "drizzle-orm";
 // Import PostgreSQL-specific column types and table creators from Drizzle
 import {
   boolean,
-  integer,
   json,
   pgTable,
   pgTableCreator,
   text,
   timestamp,
-  varchar,
 } from "drizzle-orm/pg-core";
 
 // Create a custom table factory that prefixes every table name with "zara_" to namespace them in the database

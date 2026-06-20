@@ -6,14 +6,9 @@ import { eq, like, desc, asc, and } from "drizzle-orm";
 import {
   createTRPCRouter,
   publicProcedure,
-  // protectedProcedure is imported but unused here; kept for consistency with other routers
-  protectedProcedure,
 } from "~/server/api/trpc";
 // Import Drizzle schema objects for the product and category database tables
 import { product, category } from "~/server/db/schema";
-
-// Define a Zod schema for validating the "sizes" sub-object (milliliters and price) embedded in each product
-const sizeSchema = z.object({ ml: z.number(), price: z.number() });
 
 // Create and export the tRPC router that groups all public product- and category-related endpoints
 export const productRouter = createTRPCRouter({

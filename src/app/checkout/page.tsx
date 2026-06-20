@@ -3,8 +3,6 @@
 
 // Import useState for managing shipping form fields
 import { useState } from "react";
-// Import useRouter for potential navigation after checkout
-import { useRouter } from "next/navigation";
 // Import the tRPC React client for querying cart data and creating a checkout session
 import { api } from "~/trpc/react";
 // Import useSession to verify the user is authenticated before showing checkout
@@ -14,8 +12,6 @@ import Link from "next/link";
 
 // CheckoutPage renders a shipping form and order summary, then creates a Stripe Checkout session on submit
 export default function CheckoutPage() {
-  // Initialize the Next.js router for potential navigation
-  const router = useRouter();
   // Fetch the current session — checkout requires authentication
   const { data: session } = useSession();
   // Query the user's cart items; only enabled when authenticated, used to display order summary
