@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    /* Base Options: */
+    // Enable interoperability between CommonJS and ES modules (allows default imports from CJS)
+    "esModuleInterop": true,
+    // Skip type-checking of declaration files (.d.ts) for faster compilation
+    "skipLibCheck": true,
+    // Target modern JavaScript features — ensures output is compatible with Node.js 20+
+    "target": "es2022",
+    // Allow .js and .jsx files to be part of the TypeScript compilation
+    "allowJs": true,
+    // Enable importing .json files as modules (useful for package.json imports)
+    "resolveJsonModule": true,
+    // Treat every file as a module — ensures consistent module semantics across the project
+    "moduleDetection": "force",
+    // Ensure each file can be transpiled independently (required by bundlers like Webpack/SWC)
+    "isolatedModules": true,
+    // Require explicit type-only imports/exports — prevents emit of unused type imports
+    "verbatimModuleSyntax": true,
+
+    /* Strictness */
+    // Enable all strict type-checking options (strictNullChecks, strictFunctionTypes, etc.)
+    "strict": true,
+    // Raise an error when accessing an index that could be undefined (e.g., array[0] could be undefined)
+    "noUncheckedIndexedAccess": true,
+    // Type-check JavaScript files using the same strict settings as TypeScript files
+    "checkJs": true,
+
+    /* Bundled projects */
+    // Include DOM type definitions (document, window, etc.) plus ES2022 built-ins
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    // Do not emit compiled output files — Next.js uses its own SWC-based compiler for emission
+    "noEmit": true,
+    // Use ES module syntax in the output (required for Next.js App Router)
+    "module": "ESNext",
+    // Use the modern bundler-style module resolution strategy (matches Next.js behaviour)
+    "moduleResolution": "Bundler",
+    // Preserve JSX syntax as-is — Next.js handles JSX transformation via SWC
+    "jsx": "preserve",
+    // Enable the official Next.js TypeScript plugin for enhanced editor features (e.g., go-to-definition)
+    "plugins": [{ "name": "next" }],
+    // Enable incremental compilation so subsequent builds are faster
+    "incremental": true,
+
+    /* Path Aliases */
+    // Base directory for resolving non-relative module names (set to project root)
+    "baseUrl": ".",
+    // Define module path aliases: "~/*" maps to "./src/*" for clean import paths
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  // List of file globs and directories to include in the compilation
+  "include": [
+    "next-env.d.ts",    // Auto-generated Next.js type declarations
+    "**/*.ts",          // All TypeScript files
+    "**/*.tsx",         // All TSX files
+    "**/*.cjs",         // CommonJS files (e.g., config files)
+    "**/*.js",          // JavaScript files
+    ".next/types/**/*.ts"  // Next.js generated type declarations
+  ],
+  // Directories and files to exclude from compilation entirely
+  "exclude": ["node_modules", "generated", "scripts"]
+}
