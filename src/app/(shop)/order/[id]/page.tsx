@@ -1,7 +1,7 @@
 // Import tRPC server helpers for server-side data fetching and hydration
 import { api, HydrateClient } from "~/trpc/server";
-// Import the auth server config for getting the session via headers
-import { auth } from "~/server/better-auth/config";
+// Import the lazy better-auth initializer for getting the session via headers
+import { getAuth } from "~/server/better-auth/config";
 // Import the headers function from next/headers to read the request headers for session retrieval
 import { headers } from "next/headers";
 // Import notFound to return a 404 when the order is not found or user is unauthorized
@@ -18,7 +18,7 @@ export default async function OrderPage({
   // Await the params promise (Next.js 15 pattern) to get the order ID from the URL
   const { id } = await params;
   // Fetch the current session server-side using the request headers; if null, return 404
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) return notFound();
 
   // Server-fetch the order by numeric ID via the tRPC order router

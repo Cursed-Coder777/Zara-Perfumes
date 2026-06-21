@@ -1,7 +1,7 @@
 // Import NextRequest and NextResponse for handling HTTP requests and responses in the App Router
 import { type NextRequest, NextResponse } from "next/server";
 // Import the configured Stripe instance for verifying webhook signatures
-import { stripe } from "~/lib/stripe";
+import { getStripe } from "~/lib/stripe";
 // Import the validated environment variables to access the webhook secret
 import { env } from "~/env";
 // Import the database instance for updating order status after successful payment
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   let event;
   try {
     // Verify the webhook signature using the raw body, signature, and the webhook secret from env
-    event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
   } catch {
     // If signature verification fails, return a 400 error
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });

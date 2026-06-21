@@ -33,7 +33,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "ZARA | Fragrance",
   description: "Curated fragrances that define your presence.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/logo.webp" }],
 };
 
 // RootLayout is an async server component that renders the outer HTML shell, fetches the session, and wraps children in all global providers

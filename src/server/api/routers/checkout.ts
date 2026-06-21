@@ -11,8 +11,8 @@ import {
 import { cartItem, order, orderItem } from "~/server/db/schema";
 // Import the Drizzle eq helper for building WHERE clauses
 import { eq } from "drizzle-orm";
-// Import the Stripe SDK instance configured with the secret key
-import { stripe } from "~/lib/stripe";
+// Import the Stripe lazy initializer (avoids crash during build when env vars aren't available)
+import { getStripe } from "~/lib/stripe";
 
 // Create and export the tRPC router for the checkout flow — creates an order then a Stripe session
 export const checkoutRouter = createTRPCRouter({
@@ -108,7 +108,7 @@ export const checkoutRouter = createTRPCRouter({
       if (!createdOrder) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create order" });
 
       // Create a Stripe Checkout Session for payment collection
-      const stripeSession = await stripe.checkout.sessions.create({
+      const stripeSession = await getStripe().checkout.sessions.create({
         // One-time payment mode (not subscription)
         mode: "payment",
         // Map each cart item to a Stripe line item with price_data

@@ -14,8 +14,8 @@ import superjson from "superjson";
 // Import ZodError for structured validation error formatting on the client side
 import { ZodError } from "zod";
 
-// Import the better-auth instance to extract session information from request headers
-import { auth } from "~/server/better-auth";
+// Import the better-auth lazy initializer to extract session information from request headers
+import { getAuth } from "~/server/better-auth";
 // Import the Drizzle database instance for querying user roles in the auth middleware
 import { db } from "~/server/db";
 // Import the user table schema for role lookups during protected procedure validation
@@ -38,7 +38,7 @@ import { eq } from "drizzle-orm";
 // Create the tRPC context factory: extracts the session from the incoming request headers and makes db + session available to all procedures
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   // Fetch the current user session from better-auth using the request headers (reads the session cookie)
-  const session = await auth.api.getSession({
+  const session = await getAuth().api.getSession({
     headers: opts.headers,
   });
   // Return the database instance, the session (null if not logged in), and the raw opts (headers) for downstream use
