@@ -1,210 +1,122 @@
-// Mark this component as a Client Component so it can use hooks (useState, useRouter) and browser APIs
 "use client";
 
-// Import useState for managing form fields and UI state (login/signup mode, loading, errors)
-import { useState } from "react";
-// Import useRouter for navigation after successful authentication
-import { useRouter } from "next/navigation";
-// Import the better-auth client for calling sign-up, sign-in, and social auth methods
 import { authClient } from "~/server/better-auth/client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-// AuthPage renders a login/signup form with email/password authentication and Google/GitHub OAuth buttons
 export default function AuthPage() {
-  // Initialize the Next.js router for redirecting users after authentication
   const router = useRouter();
-  // Toggle between "login" and "signup" modes — controls form fields and button text
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  // Controlled input for the email field
   const [email, setEmail] = useState("");
-  // Controlled input for the password field
   const [password, setPassword] = useState("");
-  // Controlled input for the name field (only shown in signup mode)
   const [name, setName] = useState("");
-  // Error message string displayed when authentication fails
+  const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState("");
-  // Loading state to disable the submit button and show "Processing..." text during auth
-  const [loading, setLoading] = useState(false);
 
-  // Handle form submission: for signup mode, first register, then sign in; for login mode, sign in directly
-  const handleSubmit = async (e: React.FormEvent) => {
-    // Prevent the default browser form submission behavior
+  const session = authClient.useSession();
+
+  useEffect(() => {
+    if (session.data) router.push("/");
+  }, [session.data, router]);
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Clear any previous error message before attempting authentication
     setError("");
-    // Set loading to true to disable the button and show processing state
-    setLoading(true);
-
-    try {
-      // In signup mode, first register the user with email, password, and name
-      if (mode === "signup") {
-        // Call the better-auth sign-up API with the user's credentials
-        const { error: signupError } = await authClient.signUp.email({
-          email,
-          password,
-          name,
-        });
-        // If sign-up fails, display the error message and re-enable the form
-        if (signupError) {
-          setError(signupError.message ?? signupError.statusText ?? "Signup failed");
-          setLoading(false);
-          return;
-        }
-      }
-
-      // After sign-up (or in login mode), attempt to sign in with email and password
-      const { error: signInError } = await authClient.signIn.email({
-        email,
-        password,
-      });
-
-      // If sign-in fails, display the error message and re-enable the form
-      if (signInError) {
-        setError(signInError.message ?? signInError.statusText ?? "Sign in failed");
-        setLoading(false);
-        return;
-      }
-
-      // On successful authentication, redirect to the home page
-      router.push("/");
-      // Refresh the router to update any server-rendered content that depends on the session
-      router.refresh();
-    } catch {
-      // Catch any unexpected exceptions and show a generic error message
-      setError("Something went wrong");
-      setLoading(false);
+    if (isRegister) {
+      const { error: err } = await authClient.signUp.email({ email, password, name });
+      if (err) setError(err.message ?? err.statusText);
+      else router.push("/");
+    } else {
+      const { error: err } = await authClient.signIn.email({ email, password });
+      if (err) setError(err.message ?? err.statusText);
     }
   };
 
-  // Render the auth page with form fields, OAuth buttons, and mode toggle link
+  const handleGoogle = async () => {
+    await authClient.signIn.social({ provider: "google", callbackURL: "/" });
+  };
+
+  const handleGithub = async () => {
+    await authClient.signIn.social({ provider: "github", callbackURL: "/" });
+  };
+
+  if (session.isPending) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (session.data) return null;
+
   return (
-    <div className="pt-32 pb-16 md:pb-24 min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-md px-6">
-        {/* Header with "Welcome" label and dynamic title based on login/signup mode */}
-        <div className="text-center mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
-            Welcome
-          </p>
-          <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight mb-2">
-            {mode === "login" ? "Sign In" : "Create Account"}
-          </h1>
-          <p className="text-sm text-neutral-500">
-            {mode === "login"
-              ? "Enter your details to sign in"
-              : "Create an account to get started"}
-          </p>
-        </div>
+    <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4">
+      <div className="w-full max-w-sm space-y-6">
+        <h1 className="font-serif text-3xl text-center text-white">
+          {isRegister ? "Create Account" : "Sign In"}
+        </h1>
 
-        {/* Email/password form — conditionally shows name field in signup mode */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name input field: only rendered in signup mode */}
-          {mode === "signup" && (
-            <div>
-              <label className="text-xs uppercase tracking-widest text-neutral-500 mb-2 block">
-                Name
-              </label>
-              <input
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-neutral-950 dark:focus:border-neutral-50 transition-colors"
-              />
-            </div>
-          )}
-          {/* Email input field — always visible, required */}
-          <div>
-            <label className="text-xs uppercase tracking-widest text-neutral-500 mb-2 block">
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-neutral-950 dark:focus:border-neutral-50 transition-colors"
-            />
-          </div>
-          {/* Password input field — always visible, required */}
-          <div>
-            <label className="text-xs uppercase tracking-widest text-neutral-500 mb-2 block">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-neutral-950 dark:focus:border-neutral-50 transition-colors"
-            />
-          </div>
+        {error && <p className="text-sm text-red-400 text-center">{error}</p>}
 
-          {/* Error message displayed in red when authentication fails */}
-          {error && (
-            <p className="text-xs text-red-500 uppercase tracking-wider">{error}</p>
-          )}
-
-          {/* Submit button — shows "Processing..." while loading, otherwise "Sign In" or "Create Account" */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 w-full"
-          >
-            {loading
-              ? "Processing..."
-              : mode === "login"
-                ? "Sign In"
-                : "Create Account"}
-          </button>
-        </form>
-
-        {/* Divider with "Or" text separating email form from OAuth buttons */}
-        <div className="relative my-8">
-          <div className="h-px w-full bg-neutral-200 dark:bg-neutral-800" />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-neutral-50 dark:bg-neutral-950 px-4 text-xs text-neutral-400 uppercase tracking-wider">
-            Or
-          </span>
-        </div>
-
-        {/* Social OAuth buttons: Google and GitHub — each triggers the better-auth social sign-in flow */}
         <div className="space-y-3">
-          {/* Google OAuth button — opens the Google sign-in redirect URL */}
           <button
-            onClick={async () => {
-              const { data } = await authClient.signIn.social({
-                provider: "google",
-                callbackURL: "/",
-              });
-              if (data?.url) window.location.href = data.url;
-            }}
-            className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 border border-neutral-950 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950 w-full"
+            onClick={handleGoogle}
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-700 px-4 py-3 text-white transition-colors hover:bg-neutral-800"
           >
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
             Continue with Google
           </button>
-          {/* GitHub OAuth button — opens the GitHub sign-in redirect URL */}
+
           <button
-            onClick={async () => {
-              const { data } = await authClient.signIn.social({
-                provider: "github",
-                callbackURL: "/",
-              });
-              if (data?.url) window.location.href = data.url;
-            }}
-            className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 border border-neutral-950 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950 w-full"
+            onClick={handleGithub}
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-700 px-4 py-3 text-white transition-colors hover:bg-neutral-800"
           >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.1.82-.26.82-.58 0-.29-.01-1.24-.02-2.26-3.34.72-4.04-1.44-4.04-1.44-.55-1.42-1.36-1.8-1.36-1.8-1.1-.76.09-.74.09-.74 1.22.08 1.86 1.25 1.86 1.25 1.08 1.86 2.84 1.32 3.54 1.01.1-.8.42-1.33.76-1.63-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.02-.32 3.33 1.24a11.5 11.5 0 0 1 3.04-.41c1.03.01 2.07.14 3.04.41 2.3-1.56 3.32-1.24 3.32-1.24.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.82 5.63-5.5 5.92.43.37.82 1.1.82 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.22.69.83.57C20.57 21.79 24 17.3 24 12 24 5.37 18.63 0 12 0z"/>
+            </svg>
             Continue with GitHub
           </button>
         </div>
 
-        {/* Mode toggle link — switches between login and signup forms and clears errors */}
-        <p className="text-center mt-8 text-sm text-neutral-500">
-          {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-neutral-700" /></div>
+          <div className="relative flex justify-center text-xs uppercase"><span className="bg-neutral-950 px-2 text-neutral-500">Or</span></div>
+        </div>
+
+        <form onSubmit={handleEmailAuth} className="space-y-4">
+          {isRegister && (
+            <input
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-white placeholder-neutral-500 outline-none focus:border-white"
+            />
+          )}
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-white placeholder-neutral-500 outline-none focus:border-white"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-white placeholder-neutral-500 outline-none focus:border-white"
+          />
           <button
-            onClick={() => {
-              setMode(mode === "login" ? "signup" : "login");
-              setError("");
-            }}
-            className="underline hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors"
+            type="submit"
+            className="w-full rounded-lg bg-white px-4 py-3 font-medium text-neutral-950 transition-colors hover:bg-neutral-200"
           >
-            {mode === "login" ? "Sign up" : "Sign in"}
+            {isRegister ? "Create Account" : "Sign In"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-neutral-400">
+          {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+          <button onClick={() => setIsRegister(!isRegister)} className="text-white underline">
+            {isRegister ? "Sign In" : "Register"}
           </button>
         </p>
       </div>
