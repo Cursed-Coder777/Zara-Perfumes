@@ -11,8 +11,9 @@ export const createQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {
-        // Set a 30-second stale time so server-fetched data isn't immediately refetched on the client after hydration
         staleTime: 30 * 1000,
+        refetchOnWindowFocus: false,
+        gcTime: 5 * 60 * 1000,
       },
       dehydrate: {
         // Use SuperJSON to serialize query data before sending it from server to client

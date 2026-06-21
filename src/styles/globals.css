@@ -34,16 +34,10 @@
   }
 
   body {
-    background-color: var(--color-neutral-50);
-    color: var(--color-neutral-950);
+    background-color: var(--color-neutral-950);
+    color: var(--color-neutral-50);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  }
-
-  .dark body,
-  body.dark {
-    background-color: var(--color-neutral-950);
-    color: var(--color-neutral-50);
   }
 }

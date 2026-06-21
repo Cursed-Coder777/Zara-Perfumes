@@ -1,5 +1,5 @@
-// Import Link for client-side navigation to the product detail page
-import Link from "next/link";
+// Import TransitionLink for animated page transitions
+import { TransitionLink } from "~/components/ui/TransitionLink";
 
 // Type definition for the props that ProductCard receives — id, name, slug, price, images array, and optional scent notes
 type ProductCardProps = {
@@ -14,8 +14,8 @@ type ProductCardProps = {
 // ProductCard is a server component that renders a single product preview card — used in grids on the homepage and products page
 export function ProductCard({ name, slug, price, images, scentNotes }: ProductCardProps) {
   return (
-    // Entire card is a Link to the product detail page, with a vertical flex layout
-    <Link
+    // Entire card is a TransitionLink to the product detail page, with a vertical flex layout
+    <TransitionLink
       href={`/products/${slug}`}
       className="group flex flex-col gap-4"
     >
@@ -53,6 +53,6 @@ export function ProductCard({ name, slug, price, images, scentNotes }: ProductCa
           ${(price / 100).toFixed(2)}
         </p>
       </div>
-    </Link>
+    </TransitionLink>
   );
 }

@@ -1,10 +1,12 @@
 // HeroSection is a client component that renders the full-viewport hero banner with a Ferrofluid fluid-dynamics WebGL background and overlays the brand tagline + CTA buttons on top
 "use client";
 
-// Import Link for client-side navigation between pages
+// Import TransitionLink for animated page transitions
+import { TransitionLink } from "~/components/ui/TransitionLink";
 import Link from "next/link";
-// Import the Ferrofluid component — a WebGL-based magnetic fluid animation with mouse interaction
-import Ferrofluid from "~/components/ui/Ferrofluid";
+import dynamic from "next/dynamic";
+
+const Ferrofluid = dynamic(() => import("~/components/ui/Ferrofluid"), { ssr: false });
 
 export default function HeroSection() {
   return (
@@ -72,9 +74,9 @@ export default function HeroSection() {
           </p>
           {/* Call-to-action buttons: primary filled link to /products, secondary outlined link to #featured */}
           <div className="flex items-center justify-center gap-4">
-            <Link href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200">
+            <TransitionLink href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200">
               Explore Collection
-            </Link>
+            </TransitionLink>
             <Link href="#featured" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 border border-neutral-950 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950">
               View Featured
             </Link>

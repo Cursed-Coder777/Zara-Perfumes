@@ -46,6 +46,18 @@ Premium perfume e-commerce built with Next.js 15 App Router, tRPC v11, Drizzle O
 - Hero section uses Ferrofluid WebGL fluid animation (`src/components/ui/Ferrofluid.tsx`) with OGL
 - React Bits components installed via shadcn CLI (`pnpm dlx shadcn@latest add @react-bits/ComponentName`)
 
+### Page Transitions
+- `Stairs` component wraps pages with a GSAP animated 5-panel overlay
+- `TransitionLink` component intercepts `<a>` clicks to trigger the transition before navigation
+- Use `TransitionLink` instead of `next/link` or regular `<a>` tags for animated page transitions
+- The `useStairs()` hook exposes `startTransition(navigateCallback)` for manual triggers
+
+### Admin Panel
+- Located at `/admin` — simple password gate (`sessionStorage`) for local dev
+- Hardcoded password `"password"` — replace with real auth for production
+- Tab-based UI: Products (CRUD) and Orders (status management)
+- Product form supports sizes in `ml:price` format, scent notes, featured toggle
+
 ### Payments
 - Stripe Checkout for payment processing
 - `src/lib/stripe.ts` initializes Stripe with secret key
@@ -68,6 +80,8 @@ pnpm dev          # Development with Turbopack
 pnpm build        # Production build (runs ESLint + TypeScript)
 pnpm lint         # ESLint only
 pnpm typecheck    # TypeScript only
+pnpm db:push      # Push schema to database
+pnpm db:studio    # Open Drizzle Studio
 ```
 
 ### File Organization

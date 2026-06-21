@@ -12,8 +12,8 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "~/lib/theme-provider";
 // Import the Nav component — a fixed top navigation bar with links, cart badge, and auth-aware controls
 import { Nav } from "~/components/nav";
-// Import the Footer component — renders branding, navigation links, and contact info on every page
-import { Footer } from "~/components/footer";
+// Import Stairs for page transition animations
+import { Stairs } from "~/components/ui/Stairs";
 // Import getSession for server-side authentication — passes the session to Nav for conditional UI
 import { getSession } from "~/server/better-auth/server";
 
@@ -52,12 +52,13 @@ export default async function RootLayout({
         <TRPCReactProvider>
           {/* ThemeProvider manages light/dark state and applies/removes the "dark" class on <html> */}
           <ThemeProvider>
-            {/* Nav receives the session prop to conditionally show sign-in, cart, orders, admin, or sign-out links */}
-            <Nav session={session} />
-            {/* The <main> element renders the current page's children from the matched route */}
-            <main>{children}</main>
-            {/* Footer renders consistent branding, navigation links, and contact info at the bottom of every page */}
-            <Footer />
+            {/* Stairs wraps Nav + main so TransitionLink inside Nav can access the context */}
+            <Stairs>
+              {/* Nav receives the session prop to conditionally show sign-in, cart, orders, admin, or sign-out links */}
+              <Nav session={session} />
+              {/* The <main> element renders the current page's children from the matched route */}
+              <main>{children}</main>
+            </Stairs>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

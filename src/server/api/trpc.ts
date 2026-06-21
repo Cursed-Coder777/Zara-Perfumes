@@ -106,13 +106,6 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   // Record the start timestamp before executing the procedure
   const start = Date.now();
 
-  // In development mode, add a random delay (100-500ms) to simulate real-world network latency
-  if (t._config.isDev) {
-    // artificial delay in dev
-    const waitMs = Math.floor(Math.random() * 400) + 100;
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
-  }
-
   // Execute the actual procedure (query or mutation) and capture its result
   const result = await next();
 

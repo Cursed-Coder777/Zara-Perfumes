@@ -2,7 +2,6 @@ import Link from "next/link";
 import { api, HydrateClient } from "~/trpc/server";
 import { ProductCard } from "~/components/product-card";
 import HeroSection from "~/components/hero-section";
-import ScrollReveal from "~/components/ScrollReveal";
 
 // Home is the main landing page — an async server component that fetches featured products, categories, and latest products, then renders marketing sections
 export default async function Home() {
@@ -10,8 +9,6 @@ export default async function Home() {
   const featured = await api.product.list({ featured: true, limit: 4 });
   // Fetch all product categories from the tRPC product router to render category filter buttons
   const categories = await api.product.categories();
-  // Fetch up to 8 newest products from the tRPC product router for the Latest Additions section
-  const latest = await api.product.list({ sort: "newest", limit: 8 });
 
   return (
     // HydrateClient wraps the JSX to pass server-fetched tRPC data to the client query cache, preventing refetch on hydration
@@ -34,28 +31,11 @@ export default async function Home() {
               View All →
             </Link>
           </div>
-          {/* 2-column on mobile, 4-column on desktop grid rendering each featured product as a ProductCard */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 auto-rows-fr">
             {featured.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Scroll-reveal quote section — animated word-by-word reveal on scroll using GSAP */}
-      <section className="px-6 md:px-12 lg:px-24 py-16 md:py-24 lg:py-32 bg-neutral-100 dark:bg-neutral-900">
-        <div className="mx-auto max-w-4xl text-center">
-          <ScrollReveal
-            baseOpacity={0.1}
-            enableBlur
-            baseRotation={3}
-            blurStrength={4}
-          >
-            When does a man die? When he is hit by a bullet? No! When he suffers
-            a disease? No! When he ate a soup made out of a poisonous mushroom?
-            No! A man dies when he is forgotten!
-          </ScrollReveal>
         </div>
       </section>
 
@@ -86,25 +66,34 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Latest Additions section — displays the 8 newest products in a grid with a "New Arrivals" heading */}
-      <section className="px-6 md:px-12 lg:px-24 py-16 md:py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 md:px-12">
-          <div className="flex items-end justify-between mb-12 md:mb-16">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
-                New Arrivals
-              </p>
-              <h2 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight">Latest Additions</h2>
-            </div>
-          </div>
-          {/* Grid of ProductCard components rendered from the server-fetched latest array */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {latest.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* <section>
+        <ScrollStack useWindowScroll>
+          <ScrollStackItem itemClassName="bg-neutral-900 border border-neutral-700">
+            <h2 className="font-serif text-3xl md:text-5xl tracking-tight mb-4 text-neutral-50">Noir Extreme</h2>
+            <p className="text-neutral-400 text-lg leading-relaxed max-w-xl">
+              A bold, seductive blend of dark woods and warm spices. Made for those who leave a lasting impression.
+            </p>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="bg-neutral-900 border border-neutral-700">
+            <h2 className="font-serif text-3xl md:text-5xl tracking-tight mb-4 text-neutral-50">Azure Bloom</h2>
+            <p className="text-neutral-400 text-lg leading-relaxed max-w-xl">
+              Fresh aquatic florals meet crisp citrus. A breath of coastal air captured in a bottle.
+            </p>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="bg-neutral-900 border border-neutral-700">
+            <h2 className="font-serif text-3xl md:text-5xl tracking-tight mb-4 text-neutral-50">Santal Royal</h2>
+            <p className="text-neutral-400 text-lg leading-relaxed max-w-xl">
+              Luxurious sandalwood wrapped in amber and hints of oud. Timeless elegance for any occasion.
+            </p>
+          </ScrollStackItem>
+          <ScrollStackItem itemClassName="bg-neutral-900 border border-neutral-700">
+            <h2 className="font-serif text-3xl md:text-5xl tracking-tight mb-4 text-neutral-50">Citrus Mist</h2>
+            <p className="text-neutral-400 text-lg leading-relaxed max-w-xl">
+              Bright Sicilian bergamot meets zesty grapefruit. An invigorating burst of energy for the modern spirit.
+            </p>
+          </ScrollStackItem>
+        </ScrollStack>
+      </section> */}
 
       {/* Call-to-action bottom banner — dark section with "The Essence of You" tagline and a "Shop Now" link */}
       <section className="px-6 md:px-12 lg:px-24 py-16 md:py-24 lg:py-32 bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950">

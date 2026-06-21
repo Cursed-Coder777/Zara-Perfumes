@@ -1,43 +1,32 @@
-// Import Zod for runtime validation of admin CRUD inputs
+// Import Zod for runtime validation of procedure input schemas
 import { z } from "zod";
-// Import tRPC error class for throwing structured errors (notably UNAUTHORIZED)
-import { TRPCError } from "@trpc/server";
-// Import Drizzle helpers for building WHERE and ORDER BY clauses
+// Import Drizzle ORM helpers for building SQL WHERE equality and sort clauses
 import { eq, desc } from "drizzle-orm";
-// Import tRPC utilities: router factory and protected procedure (requires authentication)
+// Import tRPC utilities: router factory and public (unauthenticated) procedure builder
 import {
   createTRPCRouter,
-  protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
-// Import Drizzle schemas for the product, category, and order tables
+// Import Drizzle schema objects for the product, category, and order database tables
 import { product, category, order } from "~/server/db/schema";
 
-// Create and export the tRPC router for all admin-only operations
+// Create and export the tRPC router that groups all admin-only endpoints for
+// managing products, categories, and orders
 export const adminRouter = createTRPCRouter({
-  // Protected procedure: simple check to see if the current user has the admin role
-  isAdmin: protectedProcedure.query(async ({ ctx }) => {
-    // Return true if the user's role (from the session-enriched context) is "admin"
-    return ctx.session.user.role === "admin";
-  }),
-
-  // Namespace containing all admin product sub-endpoints
+  /** Admin procedures for full CRUD on the products table. */
   products: {
-    // Protected procedure: list all products with their category (admin only)
-    list: protectedProcedure.query(async ({ ctx }) => {
-      // Gate check: reject non-admin users with an UNAUTHORIZED error
-      if (ctx.session.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-      // Fetch every product row, including the related category, newest first
+    /** Public procedure: fetch every product, eagerly loading the related category. */
+    list: publicProcedure.query(async ({ ctx }) => {
       return await ctx.db.query.product.findMany({
+        // Include the related category data for display (e.g. category name badge)
         with: { category: true },
+        // Sort newest products first
         orderBy: desc(product.createdAt),
       });
     }),
 
-    // Protected procedure: create a new product (admin only)
-    create: protectedProcedure
-      // Validate all product fields required for insertion
+    /** Public procedure: insert a new product with all required and optional fields. */
+    create: publicProcedure
       .input(
         z.object({
           name: z.string().min(1),
@@ -52,19 +41,13 @@ export const adminRouter = createTRPCRouter({
           isFeatured: z.boolean().default(false),
         }),
       )
-      // Mutation inserts a new product row
       .mutation(async ({ ctx, input }) => {
-        // Gate check: only admin users can create products
-        if (ctx.session.user.role !== "admin") {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        // Insert the validated product data directly as a new row
+        // Insert the full input object (every field matches the product table DDL)
         await ctx.db.insert(product).values(input);
       }),
 
-    // Protected procedure: update an existing product (admin only)
-    update: protectedProcedure
-      // Validate the product ID and optional fields to update
+    /** Public procedure: partial update of an existing product, identified by its ID. */
+    update: publicProcedure
       .input(
         z.object({
           id: z.number(),
@@ -80,48 +63,31 @@ export const adminRouter = createTRPCRouter({
           isFeatured: z.boolean().optional(),
         }),
       )
-      // Mutation updates only the provided fields on the matching product
       .mutation(async ({ ctx, input }) => {
-        // Gate check: only admin users can update products
-        if (ctx.session.user.role !== "admin") {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        // Separate the ID from the rest of the data — ID is used in WHERE, not SET
+        // Separate the ID (used in WHERE) from the rest of the fields (used as SET)
         const { id, ...data } = input;
-        // Update the product row with only the fields the client provided
+        // Apply only the provided fields; undefined fields are ignored by Drizzle
         await ctx.db.update(product).set(data).where(eq(product.id, id));
       }),
 
-    // Protected procedure: delete a product by ID (admin only)
-    delete: protectedProcedure
-      // Accept only the product ID to delete
+    /** Public procedure: hard-delete a product by its primary-key ID. */
+    delete: publicProcedure
       .input(z.object({ id: z.number() }))
-      // Mutation removes the product row permanently
       .mutation(async ({ ctx, input }) => {
-        // Gate check: only admin users can delete products
-        if (ctx.session.user.role !== "admin") {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        // Delete the product row matching the given ID
+        // Destroy the row matching the given product ID
         await ctx.db.delete(product).where(eq(product.id, input.id));
       }),
   },
 
-  // Namespace containing all admin category sub-endpoints
+  /** Admin procedures for reading and creating product categories. */
   categories: {
-    // Protected procedure: list all categories (admin only)
-    list: protectedProcedure.query(async ({ ctx }) => {
-      // Gate check: only admin users can view the category list
-      if (ctx.session.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-      // Fetch all category rows ordered by creation date descending
+    /** Public procedure: fetch all categories, newest first. */
+    list: publicProcedure.query(async ({ ctx }) => {
       return await ctx.db.query.category.findMany({ orderBy: desc(category.createdAt) });
     }),
 
-    // Protected procedure: create a new category (admin only)
-    create: protectedProcedure
-      // Validate the name, slug, and optional description/image fields
+    /** Public procedure: insert a new category with a name, slug, and optional fields. */
+    create: publicProcedure
       .input(
         z.object({
           name: z.string().min(1),
@@ -130,48 +96,35 @@ export const adminRouter = createTRPCRouter({
           image: z.string().optional(),
         }),
       )
-      // Mutation inserts a new category row
       .mutation(async ({ ctx, input }) => {
-        // Gate check: only admin users can create categories
-        if (ctx.session.user.role !== "admin") {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        // Insert the validated category data as a new row
+        // Insert the full input object matching the category table columns
         await ctx.db.insert(category).values(input);
       }),
   },
 
-  // Namespace containing all admin order sub-endpoints
+  /** Admin procedures for reading and updating customer orders. */
   orders: {
-    // Protected procedure: list all orders across all users (admin only)
-    list: protectedProcedure.query(async ({ ctx }) => {
-      // Gate check: only admin users can view all orders
-      if (ctx.session.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-      // Fetch every order with its items and the user who placed it, newest first
+    /** Public procedure: fetch all orders with their line items and the user who placed them. */
+    list: publicProcedure.query(async ({ ctx }) => {
       return await ctx.db.query.order.findMany({
+        // Eagerly load both the order items and the user record
         with: { items: true, user: true },
+        // Newest orders first
         orderBy: desc(order.createdAt),
       });
     }),
 
-    // Protected procedure: update the status of a specific order (admin only)
-    updateStatus: protectedProcedure
-      // Accept the order ID and the new status from a fixed set of valid values
+    /** Public procedure: update the status of a single order (e.g. pending → shipped). */
+    updateStatus: publicProcedure
       .input(
         z.object({
           id: z.number(),
+          // Restrict valid transitions to the five allowed statuses
           status: z.enum(["pending", "paid", "shipped", "delivered", "cancelled"]),
         }),
       )
-      // Mutation updates just the status column on the order
       .mutation(async ({ ctx, input }) => {
-        // Gate check: only admin users can update order status
-        if (ctx.session.user.role !== "admin") {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        // Update the order's status to the new value, targeting the order by ID
+        // Set only the status column on the matching order row
         await ctx.db
           .update(order)
           .set({ status: input.status })

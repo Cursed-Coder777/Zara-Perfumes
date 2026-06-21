@@ -1,5 +1,5 @@
-// Import Link for client-side navigation to app pages
-import Link from "next/link";
+// Import TransitionLink for animated page transitions
+import { TransitionLink } from "~/components/ui/TransitionLink";
 
 // Footer is a server component that renders the site-wide footer with branding, navigation links, contact info, and copyright
 export function Footer() {
@@ -11,9 +11,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand column — logo and short brand description */}
           <div>
-            <Link href="/" className="font-serif text-2xl font-bold tracking-tight">
+            <TransitionLink href="/" className="font-serif text-2xl font-bold tracking-tight">
               ZARA
-            </Link>
+            </TransitionLink>
             <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
               Curated fragrances that define your presence. Each bottle tells a story of
               elegance and sophistication.
@@ -22,21 +22,21 @@ export function Footer() {
           <div>
             <h3 className="text-sm uppercase tracking-widest mb-4">Navigate</h3>
             <div className="flex flex-col gap-2">
-              <Link href="/products" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
+              <TransitionLink href="/products" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
                 All Fragrances
-              </Link>
-              <Link href="/about" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
+              </TransitionLink>
+              <TransitionLink href="/about" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
                 About
-              </Link>
-              <Link href="/contact" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
+              </TransitionLink>
+              <TransitionLink href="/contact" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
                 Contact
-              </Link>
-              <Link href="/auth" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
+              </TransitionLink>
+              <TransitionLink href="/auth" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
                 Account
-              </Link>
-              <Link href="/cart" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
+              </TransitionLink>
+              <TransitionLink href="/cart" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors">
                 Cart
-              </Link>
+              </TransitionLink>
             </div>
           </div>
           <div>
@@ -44,9 +44,9 @@ export function Footer() {
             <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
               hello@zarafragrance.com
             </p>
-            <Link href="/contact" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors mt-2 inline-block">
+            <TransitionLink href="/contact" className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors mt-2 inline-block">
               Send a message →
-            </Link>
+            </TransitionLink>
           </div>
         </div>
         {/* Bottom copyright bar — shows dynamic year and "All rights reserved" */}
