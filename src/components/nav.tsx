@@ -21,6 +21,17 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 // Import the tRPC React client for fetching cart items to display the badge count
 import { api } from "~/trpc/react";
+// Import FlowingMenu for the full-screen hamburger overlay
+import FlowingMenu from "~/components/FlowingMenu";
+// Import motion + AnimatePresence for overlay enter/exit animations
+import { motion, AnimatePresence } from "motion/react";
+
+const menuItems = [
+  { link: "/", text: "Home", image: "https://picsum.photos/600/400?random=1" },
+  { link: "/products", text: "Fragrances", image: "https://picsum.photos/600/400?random=2" },
+  { link: "/about", text: "About", image: "https://picsum.photos/600/400?random=3" },
+  { link: "/contact", text: "Contact", image: "https://picsum.photos/600/400?random=4" },
+];
 
 // Nav renders the fixed top navigation bar with logo, links, theme toggle, cart badge, auth controls, and mobile hamburger menu
 export function Nav({ session }: { session: Session | null }) {
@@ -66,13 +77,6 @@ export function Nav({ session }: { session: Session | null }) {
     setMobileOpen(false);
   }, [pathname]);
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/products", label: "Fragrances" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
-  ];
-
   return (
     // Fixed header at the top of the viewport — becomes translucent with backdrop blur when scrolled
     <header
@@ -89,22 +93,7 @@ export function Nav({ session }: { session: Session | null }) {
           ZARA
         </TransitionLink>
 
-        {/* Desktop navigation links — hidden on mobile, shown on md+ screens */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <TransitionLink
-              key={link.href}
-              href={link.href}
-              className={`link-underline text-sm uppercase tracking-widest ${
-                pathname === link.href ? "after:scale-x-100" : ""
-              }`}
-            >
-              {link.label}
-            </TransitionLink>
-          ))}
-        </div>
-
-        {/* Right-side controls: cart link, auth buttons */}
+        {/* Right-side controls: cart link, auth buttons, hamburger menu */}
         <div className="flex items-center gap-6">
           {/* If user is authenticated, show cart link with count badge, orders/admin link, and sign-out button */}
           {session ? (
@@ -119,7 +108,7 @@ export function Nav({ session }: { session: Session | null }) {
                 )}
               </TransitionLink>
               {/* Admin link for admin users, Orders link for regular users — links to appropriate page */}
-              <TransitionLink href={session.user.role === "admin" ? "/admin" : "/orders"} className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 hidden md:inline-flex p-2 text-sm uppercase tracking-widest">
+              <TransitionLink href={session.user.role === "admin" ? "/admin" : "/orders"} className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 p-2 text-sm uppercase tracking-widest">
                 {session.user.role === "admin" ? "Admin" : "Orders"}
               </TransitionLink>
               {/* Sign-out button — calls authClient.signOut() then redirects to home */}
@@ -140,32 +129,45 @@ export function Nav({ session }: { session: Session | null }) {
             </TransitionLink>
           )}
 
-          {/* Mobile hamburger menu toggle — visible only on smaller screens */}
+          {/* Hamburger menu toggle — visible on all screen sizes */}
           <button
-            className="md:hidden inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 p-2"
+            className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            <span className="text-lg">{mobileOpen ? "✕" : "≡"}</span>
+            <span className="text-[30px] leading-none">{mobileOpen ? "✕" : "≡"}</span>
           </button>
         </div>
       </nav>
 
-      {/* Mobile navigation menu — shown when mobileOpen is true, contains nav links */}
-      {mobileOpen && (
-        <div className="md:hidden border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
-          <div className="flex flex-col gap-4 px-6 py-8">
-            {navLinks.map((link) => (
-              <TransitionLink
-                key={link.href}
-                href={link.href}
-                className="text-sm uppercase tracking-widest"
-              >
-                {link.label}
-              </TransitionLink>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Full-screen overlay menu — triggered by hamburger button, animated with fade/scale */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 top-0 left-0 w-screen h-screen"
+            initial={{ y: "-100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            {/* Close button at top-right of the overlay */}
+            <button
+              className="absolute top-6 right-6 z-10 text-2xl text-white hover:text-neutral-300 transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              ✕
+            </button>
+            <FlowingMenu
+              items={menuItems}
+              speed={15}
+              textColor="#ffffff"
+              bgColor="#120F17"
+              marqueeBgColor="#ffffff"
+              marqueeTextColor="#120F17"
+              borderColor="#ffffff"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

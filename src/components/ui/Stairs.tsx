@@ -109,12 +109,12 @@ export function Stairs({ children }: { children: React.ReactNode }) {
           ref={stairParentRef}
           className="fixed top-0 z-[100] hidden h-screen w-full pointer-events-none"
         >
-          <div className="flex h-full w-full">
-            <div className="stair h-full w-1/5 bg-white" />
-            <div className="stair h-full w-1/5 bg-white" />
-            <div className="stair h-full w-1/5 bg-white" />
-            <div className="stair h-full w-1/5 bg-white" />
-            <div className="stair h-full w-1/5 bg-white" />
+          <div className="flex h-full w-full" style={{ gap: 0 }}>
+            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
+            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
+            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
+            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
+            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
           </div>
         </div>
         <div ref={pageRef}>{children}</div>
