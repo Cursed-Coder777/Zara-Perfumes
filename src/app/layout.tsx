@@ -14,6 +14,7 @@ import { ThemeProvider } from "~/lib/theme-provider";
 import { Nav } from "~/components/nav";
 // Import Stairs for page transition animations
 import { Stairs } from "~/components/ui/Stairs";
+import { CursorFollower } from "~/components/CursorFollower";
 
 // Import getSession for server-side authentication — passes the session to Nav for conditional UI
 import { getSession } from "~/server/better-auth/server";
@@ -53,6 +54,7 @@ export default async function RootLayout({
         <TRPCReactProvider>
           {/* ThemeProvider manages light/dark state and applies/removes the "dark" class on <html> */}
           <ThemeProvider>
+            <CursorFollower />
             {/* Stairs wraps Nav + main so TransitionLink inside Nav can access the context */}
             <Stairs>
               {/* Nav receives the session prop to conditionally show sign-in, cart, orders, admin, or sign-out links */}
