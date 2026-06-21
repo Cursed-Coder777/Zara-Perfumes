@@ -9,11 +9,9 @@ import { env } from "~/env";
 import { db } from "~/server/db";
 
 // Lazy-initialized better-auth instance — avoids crashing during build when env vars aren't available
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-let _auth: any = null;
+let _auth: ReturnType<typeof betterAuth> | null = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getAuth(): any {
+export function getAuth(): ReturnType<typeof betterAuth> {
   _auth ??= betterAuth({
       baseURL: env.BETTER_AUTH_URL,
       database: drizzleAdapter(db, {
@@ -67,7 +65,7 @@ export function getAuth(): any {
           redirectURI: `${env.BETTER_AUTH_URL}/api/auth/callback/google`,
         },
       },
-    });
+    }) as unknown as ReturnType<typeof betterAuth>;
   return _auth;
 }
 

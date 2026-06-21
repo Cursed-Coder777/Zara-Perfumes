@@ -41,7 +41,6 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // Fetch the current user session server-side so the Nav component can render auth-aware links
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const session = await getSession();
 
   return (
@@ -56,7 +55,6 @@ export default async function RootLayout({
             {/* Stairs wraps Nav + main so TransitionLink inside Nav can access the context */}
             <Stairs>
               {/* Nav receives the session prop to conditionally show sign-in, cart, orders, admin, or sign-out links */}
-              {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
               <Nav session={session} />
               {/* The <main> element renders the current page's children from the matched route */}
               <main>{children}</main>
