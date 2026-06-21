@@ -7,27 +7,27 @@ import InfiniteMenu from "~/components/ui/InfiniteMenu";
 const items = [
   {
     image: "https://picsum.photos/300/300?grayscale",
-    link: "https://google.com/",
-    title: "Item 1",
-    description: "This is pretty cool, right?",
+    link: "/products",
+    title: "Collection",
+    description: "Explore our signature fragrances",
   },
   {
     image: "https://picsum.photos/400/400?grayscale",
-    link: "https://google.com/",
-    title: "Item 2",
-    description: "This is pretty cool, right?",
+    link: "/about",
+    title: "Craftsmanship",
+    description: "Perfume made with precision & passion",
   },
   {
     image: "https://picsum.photos/500/500?grayscale",
-    link: "https://google.com/",
-    title: "Item 3",
-    description: "This is pretty cool, right?",
+    link: "/contact",
+    title: "Get In Touch",
+    description: "We'd love to hear from you",
   },
   {
     image: "https://picsum.photos/600/600?grayscale",
-    link: "https://google.com/",
-    title: "Item 4",
-    description: "This is pretty cool, right?",
+    link: "/orders",
+    title: "Your Orders",
+    description: "Track your purchases & history",
   },
 ];
 
