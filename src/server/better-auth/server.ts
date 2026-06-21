@@ -7,5 +7,6 @@ import { cache } from "react";
 
 // Create a cached server-side session getter: deduplicates calls during a single request and fetches the session using request headers
 export const getSession = cache(async () =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   getAuth().api.getSession({ headers: await headers() }),
 );
