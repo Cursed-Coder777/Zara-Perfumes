@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
+import { TransitionLink } from '~/components/ui/TransitionLink';
 
 interface MenuItemData {
   link: string;
@@ -15,6 +16,7 @@ interface FlowingMenuProps {
   marqueeBgColor?: string;
   marqueeTextColor?: string;
   borderColor?: string;
+  onLinkClick?: () => void;
 }
 
 interface MenuItemProps extends MenuItemData {
@@ -24,6 +26,7 @@ interface MenuItemProps extends MenuItemData {
   marqueeTextColor: string;
   borderColor: string;
   isFirst: boolean;
+  onLinkClick?: () => void;
 }
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({
@@ -33,7 +36,8 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   bgColor = '#120F17',
   marqueeBgColor = '#fff',
   marqueeTextColor = '#120F17',
-  borderColor = '#fff'
+  borderColor = '#fff',
+  onLinkClick
 }) => {
   return (
     <div className="w-full h-full overflow-hidden" style={{ backgroundColor: bgColor }}>
@@ -48,6 +52,7 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
             marqueeTextColor={marqueeTextColor}
             borderColor={borderColor}
             isFirst={idx === 0}
+            onLinkClick={onLinkClick}
           />
         ))}
       </nav>
@@ -64,7 +69,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   marqueeBgColor,
   marqueeTextColor,
   borderColor,
-  isFirst
+  isFirst,
+  onLinkClick
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
@@ -156,15 +162,16 @@ const MenuItem: React.FC<MenuItemProps> = ({
       ref={itemRef}
       style={{ borderTop: isFirst ? 'none' : `1px solid ${borderColor}` }}
     >
-      <a
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-[8vh]"
+      <TransitionLink
         href={link}
+        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-[5.5vh] md:text-[7vh] lg:text-[8vh]"
+        onClick={onLinkClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         style={{ color: textColor }}
       >
         {text}
-      </a>
+      </TransitionLink>
       <div
         className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none translate-y-[101%]"
         ref={marqueeRef}

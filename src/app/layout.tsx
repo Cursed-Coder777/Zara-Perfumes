@@ -14,6 +14,7 @@ import { ThemeProvider } from "~/lib/theme-provider";
 import { Nav } from "~/components/nav";
 // Import Stairs for page transition animations
 import { Stairs } from "~/components/ui/Stairs";
+
 // Import getSession for server-side authentication — passes the session to Nav for conditional UI
 import { getSession } from "~/server/better-auth/server";
 

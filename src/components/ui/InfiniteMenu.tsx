@@ -1232,7 +1232,7 @@ class InfiniteGridMenu {
 /** Fallback single item used when no items array is provided. */
 const defaultItems: MenuItem[] = [
   {
-    image: 'https://picsum.photos/900/900?grayscale',
+    image: '/images/default.svg',
     link: 'https://google.com/',
     title: '',
     description: ''

@@ -11,25 +11,41 @@ export function TransitionLink({
   href,
   children,
   className,
+  style,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   href: string;
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
+  onClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
+  onMouseEnter?: (e: MouseEvent<HTMLAnchorElement>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const router = useRouter();
   const { startTransition } = useStairs();
 
-  const handleClick = (e: MouseEvent) => {
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    onClick?.(e);
     startTransition(() => router.push(href));
+  };
+
+  const handleMouseEnter = (e: MouseEvent<HTMLAnchorElement>) => {
+    router.prefetch(href);
+    onMouseEnter?.(e);
   };
 
   return (
     <a
       href={href}
       onClick={handleClick}
-      onMouseEnter={() => router.prefetch(href)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={onMouseLeave}
       className={className}
+      style={style}
     >
       {children}
     </a>

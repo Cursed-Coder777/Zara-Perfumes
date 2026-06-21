@@ -34,14 +34,19 @@ export function Stairs({ children }: { children: React.ReactNode }) {
   const transitioningRef = useRef(false);
   const initialRef = useRef(true);
   const pendingTlRef = useRef<gsap.core.Timeline | null>(null);
+  const transitionHandledRef = useRef(false);
 
   const startTransition = useCallback((navigate: () => void) => {
     if (transitioningRef.current) return;
     transitioningRef.current = true;
+    transitionHandledRef.current = false;
 
     gsap.set(stairParentRef.current, { display: "block" });
     gsap.set(".stair", { height: "0%", y: "0%" });
     gsap.set(pageRef.current, { opacity: 0, y: 10 });
+
+    // Start navigation immediately — overlaps with cover animation
+    navigate();
 
     const tl = gsap.timeline();
     tl.to(".stair", {
@@ -50,7 +55,32 @@ export function Stairs({ children }: { children: React.ReactNode }) {
       stagger: { amount: 0.12 },
       ease: "power3.inOut",
     });
-    tl.call(() => navigate());
+    // After cover: wait one frame for the new page DOM, then reveal
+    tl.call(() => {
+      requestAnimationFrame(() => {
+        gsap.to(".stair", {
+          y: "100%",
+          duration: 0.25,
+          stagger: { amount: 0.12 },
+          ease: "power3.inOut",
+          onComplete: () => {
+            gsap.set(stairParentRef.current, { display: "none" });
+            gsap.set(".stair", { y: "0%" });
+            gsap.to(pageRef.current, {
+              opacity: 1,
+              y: 0,
+              duration: 0.2,
+              ease: "power2.out",
+              onComplete: () => {
+                transitioningRef.current = false;
+                pendingTlRef.current = null;
+                transitionHandledRef.current = true;
+              },
+            });
+          },
+        });
+      });
+    });
 
     pendingTlRef.current = tl;
   }, []);
@@ -61,26 +91,26 @@ export function Stairs({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // TransitionLink navigations are handled entirely by startTransition
+    if (transitioningRef.current) return;
+    if (transitionHandledRef.current) {
+      transitionHandledRef.current = false;
+      return;
+    }
+
     gsap.killTweensOf(".stair");
     gsap.set(".stair", { height: "100%", y: "0%" });
     gsap.set(pageRef.current, { opacity: 0, y: 10 });
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        transitioningRef.current = false;
-        pendingTlRef.current = null;
-      },
-    });
+    const tl = gsap.timeline();
 
-    if (!transitioningRef.current) {
-      tl.set(stairParentRef.current, { display: "block" });
-      tl.from(".stair", {
-        height: 0,
-        duration: 0.25,
-        stagger: { amount: 0.12 },
-        ease: "power3.inOut",
-      });
-    }
+    tl.set(stairParentRef.current, { display: "block" });
+    tl.from(".stair", {
+      height: 0,
+      duration: 0.25,
+      stagger: { amount: 0.12 },
+      ease: "power3.inOut",
+    });
 
     tl.to(".stair", {
       y: "100%",
@@ -95,6 +125,10 @@ export function Stairs({ children }: { children: React.ReactNode }) {
       y: 0,
       duration: 0.35,
       ease: "power2.out",
+      onComplete: () => {
+        transitioningRef.current = false;
+        pendingTlRef.current = null;
+      },
     });
 
     return () => {

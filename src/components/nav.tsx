@@ -27,10 +27,10 @@ import FlowingMenu from "~/components/FlowingMenu";
 import { motion, AnimatePresence } from "motion/react";
 
 const menuItems = [
-  { link: "/", text: "Home", image: "https://picsum.photos/600/400?random=1" },
-  { link: "/products", text: "Fragrances", image: "https://picsum.photos/600/400?random=2" },
-  { link: "/about", text: "About", image: "https://picsum.photos/600/400?random=3" },
-  { link: "/contact", text: "Contact", image: "https://picsum.photos/600/400?random=4" },
+  { link: "/", text: "Home", image: "/images/nav-home.svg" },
+  { link: "/products", text: "Fragrances", image: "/images/nav-fragrances.svg" },
+  { link: "/about", text: "About", image: "/images/nav-about.svg" },
+  { link: "/contact", text: "Contact", image: "/images/nav-contact.svg" },
 ];
 
 // Nav renders the fixed top navigation bar with logo, links, theme toggle, cart badge, auth controls, and mobile hamburger menu
@@ -164,6 +164,7 @@ export function Nav({ session }: { session: Session | null }) {
               marqueeBgColor="#ffffff"
               marqueeTextColor="#120F17"
               borderColor="#ffffff"
+              onLinkClick={() => setMobileOpen(false)}
             />
           </motion.div>
         )}

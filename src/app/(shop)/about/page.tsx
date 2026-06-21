@@ -6,25 +6,25 @@ import InfiniteMenu from "~/components/ui/InfiniteMenu";
  *  Each entry provides an image URL, a click-through link, and display text. */
 const items = [
   {
-    image: "https://picsum.photos/300/300?grayscale",
+    image: "/images/about-300.svg",
     link: "/products",
     title: "Collection",
     description: "Explore our signature fragrances",
   },
   {
-    image: "https://picsum.photos/400/400?grayscale",
+    image: "/images/about-400.svg",
     link: "/about",
     title: "Craftsmanship",
     description: "Perfume made with precision & passion",
   },
   {
-    image: "https://picsum.photos/500/500?grayscale",
+    image: "/images/about-500.svg",
     link: "/contact",
     title: "Get In Touch",
     description: "We'd love to hear from you",
   },
   {
-    image: "https://picsum.photos/600/600?grayscale",
+    image: "/images/about-600.svg",
     link: "/orders",
     title: "Your Orders",
     description: "Track your purchases & history",
