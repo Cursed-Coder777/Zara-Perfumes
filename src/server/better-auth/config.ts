@@ -13,7 +13,8 @@ let _auth: ReturnType<typeof betterAuth> | null = null;
 
 export function getAuth(): ReturnType<typeof betterAuth> {
   _auth ??= betterAuth({
-      baseURL: env.BETTER_AUTH_URL,
+      secret: env.BETTER_AUTH_SECRET ?? process.env.BETTER_AUTH_SECRET,
+      baseURL: env.BETTER_AUTH_URL ?? process.env.BETTER_AUTH_URL,
       database: drizzleAdapter(db, {
         provider: "pg",
       }),

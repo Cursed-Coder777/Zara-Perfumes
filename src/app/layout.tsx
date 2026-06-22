@@ -43,7 +43,13 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // Fetch the current user session server-side so the Nav component can render auth-aware links
-  const session = await getSession();
+  // Gracefully handle missing session during static generation/build (no crash on Vercel when env not configured)
+  let session: Awaited<ReturnType<typeof getSession>> | null = null;
+  try {
+    session = await getSession();
+  } catch {
+    // Session unavailable — render without auth context
+  }
 
   return (
     // Root <html> element: sets language, applies font CSS variable classes, and suppresses hydration warnings to prevent theme flicker

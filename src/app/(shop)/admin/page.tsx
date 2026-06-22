@@ -12,7 +12,10 @@ const ADMIN_PASSWORD = "password";
  *  so the user does not have to re-enter the password on navigation. */
 export default function AdminPage() {
   // Check sessionStorage on mount so a page refresh does not lose the authenticated state
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem("admin_authed") === "true");
+  // Guarded against server-side rendering where sessionStorage is not available
+  const [authed, setAuthed] = useState(() =>
+    typeof window !== "undefined" && sessionStorage.getItem("admin_authed") === "true",
+  );
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
