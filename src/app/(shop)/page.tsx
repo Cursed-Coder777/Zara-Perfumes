@@ -95,6 +95,28 @@ export default async function Home() {
         </ScrollStack>
       </section> */}
 
+      {/* Gallery section */}
+      <section className="px-6 md:px-12 lg:px-24 py-16 md:py-24 lg:py-32">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400 text-center">
+            Visual Stories
+          </p>
+          <h2 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight mb-12 md:mb-16 text-center">Fragrance Gallery</h2>
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+            {Array.from({ length: 20 }, (_, i) => (
+              <div key={i} className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+                <img
+                  src={`/images/gallery/gallery-${i + 1}.jpg`}
+                  alt={`Gallery ${i + 1}`}
+                  className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Call-to-action bottom banner — dark section with "The Essence of You" tagline and a "Shop Now" link */}
       <section className="px-6 md:px-12 lg:px-24 py-16 md:py-24 lg:py-32 bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950">
         <div className="mx-auto max-w-7xl px-6 md:px-12 text-center">
