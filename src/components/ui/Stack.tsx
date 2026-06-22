@@ -117,7 +117,7 @@ export default function Stack({
           id: 1,
           content: (
             <img
-              src="https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?q=80&w=500&auto=format"
+              src="/images/card-1.jpg"
               alt="card-1"
               className="w-full h-full object-cover pointer-events-none"
             />
@@ -127,7 +127,7 @@ export default function Stack({
           id: 2,
           content: (
             <img
-              src="https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=500&auto=format"
+              src="/images/card-2.jpg"
               alt="card-2"
               className="w-full h-full object-cover pointer-events-none"
             />
@@ -137,7 +137,7 @@ export default function Stack({
           id: 3,
           content: (
             <img
-              src="https://images.unsplash.com/photo-1452626212852-811d58933cae?q=80&w=500&auto=format"
+              src="/images/card-3.jpg"
               alt="card-3"
               className="w-full h-full object-cover pointer-events-none"
             />
@@ -147,7 +147,7 @@ export default function Stack({
           id: 4,
           content: (
             <img
-              src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?q=80&w=500&auto=format"
+              src="/images/card-4.jpg"
               alt="card-4"
               className="w-full h-full object-cover pointer-events-none"
             />
