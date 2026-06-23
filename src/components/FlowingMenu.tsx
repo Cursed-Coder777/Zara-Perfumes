@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { gsap } from 'gsap';
-import { TransitionLink } from '~/components/ui/TransitionLink';
+import React, { useRef, useEffect, useState } from "react";
+import { gsap } from "gsap";
+import { TransitionLink } from "~/components/ui/TransitionLink";
 
 interface MenuItemData {
   link: string;
@@ -32,16 +32,16 @@ interface MenuItemProps extends MenuItemData {
 const FlowingMenu: React.FC<FlowingMenuProps> = ({
   items = [],
   speed = 15,
-  textColor = '#fff',
-  bgColor = '#120F17',
-  marqueeBgColor = '#fff',
-  marqueeTextColor = '#120F17',
-  borderColor = '#fff',
-  onLinkClick
+  textColor = "#fff",
+  bgColor = "#120F17",
+  marqueeBgColor = "#fff",
+  marqueeTextColor = "#120F17",
+  borderColor = "#fff",
+  onLinkClick,
 }) => {
   return (
-    <div className="w-full h-full overflow-hidden" style={{ backgroundColor: bgColor }}>
-      <nav className="flex flex-col h-full m-0 p-0">
+    <div className="h-full w-full overflow-hidden" style={{ backgroundColor: bgColor }}>
+      <nav className="m-0 flex h-full flex-col p-0">
         {items.map((item, idx) => (
           <MenuItem
             key={idx}
@@ -70,7 +70,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   marqueeTextColor,
   borderColor,
   isFirst,
-  onLinkClick
+  onLinkClick,
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
@@ -78,19 +78,24 @@ const MenuItem: React.FC<MenuItemProps> = ({
   const animationRef = useRef<gsap.core.Tween | null>(null);
   const [repetitions, setRepetitions] = useState(4);
 
-  const animationDefaults = { duration: 0.6, ease: 'expo' };
+  const animationDefaults = { duration: 0.6, ease: "expo" };
 
-  const findClosestEdge = (mouseX: number, mouseY: number, width: number, height: number): 'top' | 'bottom' => {
+  const findClosestEdge = (
+    mouseX: number,
+    mouseY: number,
+    width: number,
+    height: number,
+  ): "top" | "bottom" => {
     const topEdgeDist = Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY, 2);
     const bottomEdgeDist = Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY - height, 2);
-    return topEdgeDist < bottomEdgeDist ? 'top' : 'bottom';
+    return topEdgeDist < bottomEdgeDist ? "top" : "bottom";
   };
 
   useEffect(() => {
     const calculateRepetitions = () => {
       if (!marqueeInnerRef.current) return;
       // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
-      const marqueeContent = marqueeInnerRef.current.querySelector('.marquee-part') as HTMLElement;
+      const marqueeContent = marqueeInnerRef.current.querySelector(".marquee-part") as HTMLElement;
       if (!marqueeContent) return;
       const contentWidth = marqueeContent.offsetWidth;
       const viewportWidth = window.innerWidth;
@@ -99,15 +104,15 @@ const MenuItem: React.FC<MenuItemProps> = ({
     };
 
     calculateRepetitions();
-    window.addEventListener('resize', calculateRepetitions);
-    return () => window.removeEventListener('resize', calculateRepetitions);
+    window.addEventListener("resize", calculateRepetitions);
+    return () => window.removeEventListener("resize", calculateRepetitions);
   }, [text, image]);
 
   useEffect(() => {
     const setupMarquee = () => {
       if (!marqueeInnerRef.current) return;
       // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
-      const marqueeContent = marqueeInnerRef.current.querySelector('.marquee-part') as HTMLElement;
+      const marqueeContent = marqueeInnerRef.current.querySelector(".marquee-part") as HTMLElement;
       if (!marqueeContent) return;
       const contentWidth = marqueeContent.offsetWidth;
       if (contentWidth === 0) return;
@@ -119,8 +124,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
       animationRef.current = gsap.to(marqueeInnerRef.current, {
         x: -contentWidth,
         duration: speed,
-        ease: 'none',
-        repeat: -1
+        ease: "none",
+        repeat: -1,
       });
     };
 
@@ -136,35 +141,45 @@ const MenuItem: React.FC<MenuItemProps> = ({
   const handleMouseEnter = (ev: React.MouseEvent<HTMLAnchorElement>) => {
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
-    const edge = findClosestEdge(ev.clientX - rect.left, ev.clientY - rect.top, rect.width, rect.height);
+    const edge = findClosestEdge(
+      ev.clientX - rect.left,
+      ev.clientY - rect.top,
+      rect.width,
+      rect.height,
+    );
 
     gsap
       .timeline({ defaults: animationDefaults })
-      .set(marqueeRef.current, { y: edge === 'top' ? '-101%' : '101%' }, 0)
-      .set(marqueeInnerRef.current, { y: edge === 'top' ? '101%' : '-101%' }, 0)
-      .to([marqueeRef.current, marqueeInnerRef.current], { y: '0%' }, 0);
+      .set(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }, 0)
+      .set(marqueeInnerRef.current, { y: edge === "top" ? "101%" : "-101%" }, 0)
+      .to([marqueeRef.current, marqueeInnerRef.current], { y: "0%" }, 0);
   };
 
   const handleMouseLeave = (ev: React.MouseEvent<HTMLAnchorElement>) => {
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
-    const edge = findClosestEdge(ev.clientX - rect.left, ev.clientY - rect.top, rect.width, rect.height);
+    const edge = findClosestEdge(
+      ev.clientX - rect.left,
+      ev.clientY - rect.top,
+      rect.width,
+      rect.height,
+    );
 
     gsap
       .timeline({ defaults: animationDefaults })
-      .to(marqueeRef.current, { y: edge === 'top' ? '-101%' : '101%' }, 0)
-      .to(marqueeInnerRef.current, { y: edge === 'top' ? '101%' : '-101%' }, 0);
+      .to(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }, 0)
+      .to(marqueeInnerRef.current, { y: edge === "top" ? "101%" : "-101%" }, 0);
   };
 
   return (
     <div
-      className="flex-1 relative overflow-hidden text-center"
+      className="relative flex-1 overflow-hidden text-center"
       ref={itemRef}
-      style={{ borderTop: isFirst ? 'none' : `1px solid ${borderColor}` }}
+      style={{ borderTop: isFirst ? "none" : `1px solid ${borderColor}` }}
     >
       <TransitionLink
         href={link}
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-[5.5vh] md:text-[7vh] lg:text-[8vh]"
+        className="relative flex h-full cursor-pointer items-center justify-center text-[5.5vh] font-semibold uppercase no-underline md:text-[7vh] lg:text-[8vh]"
         onClick={onLinkClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -173,16 +188,22 @@ const MenuItem: React.FC<MenuItemProps> = ({
         {text}
       </TransitionLink>
       <div
-        className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none translate-y-[101%]"
+        className="pointer-events-none absolute top-0 left-0 h-full w-full translate-y-[101%] overflow-hidden"
         ref={marqueeRef}
         style={{ backgroundColor: marqueeBgColor }}
       >
-        <div className="h-full w-fit flex" ref={marqueeInnerRef}>
+        <div className="flex h-full w-fit" ref={marqueeInnerRef}>
           {Array.from({ length: repetitions }).map((_, idx) => (
-            <div className="marquee-part flex items-center flex-shrink-0" key={idx} style={{ color: marqueeTextColor }}>
-              <span className="whitespace-nowrap uppercase font-normal text-[8vh] leading-[1] px-[1vw]">{text}</span>
+            <div
+              className="marquee-part flex flex-shrink-0 items-center"
+              key={idx}
+              style={{ color: marqueeTextColor }}
+            >
+              <span className="px-[1vw] text-[8vh] leading-[1] font-normal whitespace-nowrap uppercase">
+                {text}
+              </span>
               <div
-                className="w-[400px] h-[16vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
+                className="mx-[2vw] my-[2em] h-[16vh] w-[400px] rounded-[50px] bg-cover bg-center py-[1em]"
                 style={{ backgroundImage: `url(${image})` }}
               />
             </div>

@@ -53,21 +53,21 @@ export function ProductsPage({
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         {/* Page header with "Collection" label and "All Fragrances" title */}
         <div className="mb-12 md:mb-16">
-          <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
-            Collection
-          </p>
-          <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight">All Fragrances</h1>
+          <p className="mb-3 text-xs tracking-[0.3em] text-neutral-400 uppercase">Collection</p>
+          <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-5xl">
+            All Fragrances
+          </h1>
         </div>
 
         {/* Category filter buttons — "All" button plus one button per category, updates the URL query parameter */}
-        <div className="flex flex-wrap gap-2 mb-12">
+        <div className="mb-12 flex flex-wrap gap-2">
           {/* "All" button — pushes to /products without any category filter */}
           <button
             onClick={() => router.push("/products")}
-            className={`px-4 py-2 text-xs uppercase tracking-widest border transition-all duration-200 ${
+            className={`border px-4 py-2 text-xs tracking-widest uppercase transition-all duration-200 ${
               !activeCategory
-                ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950 border-neutral-950 dark:border-neutral-50"
-                : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-950 dark:hover:border-neutral-50"
+                ? "border-neutral-950 bg-neutral-950 text-neutral-50 dark:border-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
+                : "border-neutral-200 hover:border-neutral-950 dark:border-neutral-800 dark:hover:border-neutral-50"
             }`}
           >
             All
@@ -77,10 +77,10 @@ export function ProductsPage({
             <button
               key={cat.id}
               onClick={() => router.push(`/products?category=${cat.slug}`)}
-              className={`px-4 py-2 text-xs uppercase tracking-widest border transition-all duration-200 ${
+              className={`border px-4 py-2 text-xs tracking-widest uppercase transition-all duration-200 ${
                 activeCategory === cat.slug
-                  ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950 border-neutral-950 dark:border-neutral-50"
-                  : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-950 dark:hover:border-neutral-50"
+                  ? "border-neutral-950 bg-neutral-950 text-neutral-50 dark:border-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
+                  : "border-neutral-200 hover:border-neutral-950 dark:border-neutral-800 dark:hover:border-neutral-50"
               }`}
             >
               {cat.name}
@@ -91,13 +91,11 @@ export function ProductsPage({
         {/* If no products match the filter, show an empty state message */}
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-neutral-400 text-sm uppercase tracking-widest">
-              No products found
-            </p>
+            <p className="text-sm tracking-widest text-neutral-400 uppercase">No products found</p>
           </div>
         ) : (
           // Product grid: 2 columns on mobile, 3 on tablet, 4 on desktop
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-4">
             {filtered.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}

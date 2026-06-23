@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import { usePageTitle } from "~/lib/use-page-title";
 
 // Hard-coded password gate — in production this should be replaced with proper
 // server-side auth (e.g. checking the authenticated user's role === "admin")
@@ -11,10 +12,11 @@ const ADMIN_PASSWORD = "password";
  *  On successful login the "admin_authed" flag is persisted in sessionStorage
  *  so the user does not have to re-enter the password on navigation. */
 export default function AdminPage() {
+  usePageTitle("Admin");
   // Check sessionStorage on mount so a page refresh does not lose the authenticated state
   // Guarded against server-side rendering where sessionStorage is not available
-  const [authed, setAuthed] = useState(() =>
-    typeof window !== "undefined" && sessionStorage.getItem("admin_authed") === "true",
+  const [authed, setAuthed] = useState(
+    () => typeof window !== "undefined" && sessionStorage.getItem("admin_authed") === "true",
   );
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -33,22 +35,24 @@ export default function AdminPage() {
   // Password gate UI — only render the dashboard once authenticated
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="flex min-h-screen items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
-          <h1 className="font-serif text-3xl md:text-4xl tracking-tight mb-4">Admin</h1>
-          <p className="text-xs uppercase tracking-[0.3em] text-neutral-400 mb-8">Enter password to access</p>
+          <h1 className="mb-4 font-serif text-3xl tracking-tight md:text-4xl">Admin</h1>
+          <p className="mb-8 text-xs tracking-[0.3em] text-neutral-400 uppercase">
+            Enter password to access
+          </p>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
             placeholder="Password"
-            className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-4 py-3 text-sm mb-4 focus:outline-none"
+            className="mb-4 w-full border border-neutral-200 bg-transparent px-4 py-3 text-sm focus:outline-none dark:border-neutral-800"
           />
-          {error && <p className="text-xs text-red-500 mb-4">{error}</p>}
+          {error && <p className="mb-4 text-xs text-red-500">{error}</p>}
           <button
             onClick={handleLogin}
-            className="w-full bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950 px-8 py-3 text-sm font-medium uppercase tracking-widest hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+            className="w-full bg-neutral-950 px-8 py-3 text-sm font-medium tracking-widest text-neutral-50 uppercase transition-colors hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             Enter
           </button>
@@ -66,12 +70,14 @@ function AdminDashboard() {
   const [tab, setTab] = useState<"products" | "orders">("products");
 
   return (
-    <div className="pt-32 pb-16 md:pb-24 min-h-screen">
+    <div className="min-h-screen pt-32 pb-16 md:pb-24">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <div className="flex items-center justify-between mb-12">
+        <div className="mb-12 flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">Dashboard</p>
-            <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight">Admin Panel</h1>
+            <p className="mb-3 text-xs tracking-[0.3em] text-neutral-400 uppercase">Dashboard</p>
+            <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-5xl">
+              Admin Panel
+            </h1>
           </div>
           {/* Sign out button — clears the sessionStorage flag and reloads to return to the password gate */}
           <button
@@ -79,17 +85,17 @@ function AdminDashboard() {
               sessionStorage.removeItem("admin_authed");
               window.location.reload();
             }}
-            className="text-xs uppercase tracking-widest text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors"
+            className="text-xs tracking-widest text-neutral-400 uppercase transition-colors hover:text-neutral-950 dark:hover:text-neutral-50"
           >
             Sign Out
           </button>
         </div>
 
         {/* Tab switcher — toggles between the Products management view and the Orders management view */}
-        <div className="flex gap-4 mb-12">
+        <div className="mb-12 flex gap-4">
           <button
             onClick={() => setTab("products")}
-            className={`px-4 py-2 text-xs uppercase tracking-widest border transition-colors ${
+            className={`border px-4 py-2 text-xs tracking-widest uppercase transition-colors ${
               tab === "products"
                 ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                 : "border-neutral-200 dark:border-neutral-800"
@@ -99,7 +105,7 @@ function AdminDashboard() {
           </button>
           <button
             onClick={() => setTab("orders")}
-            className={`px-4 py-2 text-xs uppercase tracking-widest border transition-colors ${
+            className={`border px-4 py-2 text-xs tracking-widest uppercase transition-colors ${
               tab === "orders"
                 ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                 : "border-neutral-200 dark:border-neutral-800"
@@ -118,7 +124,10 @@ function AdminDashboard() {
 
 /** Convert any string into a URL-friendly slug: lowercase, spaces → hyphens, strip special chars. */
 function slugify(text: string) {
-  return text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
 }
 
 /** Products list view — fetches all products with their categories,
@@ -145,13 +154,13 @@ function AdminProducts() {
       {/* Toggle button for the new-product creation form */}
       <button
         onClick={() => setShowCreate(!showCreate)}
-        className="mb-8 px-6 py-3 border border-neutral-200 dark:border-neutral-800 text-xs uppercase tracking-widest hover:bg-neutral-950 hover:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950 transition-colors"
+        className="mb-8 border border-neutral-200 px-6 py-3 text-xs tracking-widest uppercase transition-colors hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-50 dark:hover:text-neutral-950"
       >
         {showCreate ? "Cancel" : "+ New Product"}
       </button>
 
       {/* Inline create form — shown when the user clicks "+ New Product" */}
-        {showCreate && (
+      {showCreate && (
         <ProductForm
           categories={categories ?? []}
           onDone={() => {
@@ -164,7 +173,7 @@ function AdminProducts() {
       {/* Product list — each card can either show an edit form or display the product summary */}
       <div className="space-y-4">
         {products?.map((p) => (
-          <div key={p.id} className="border border-neutral-200 dark:border-neutral-800 p-6">
+          <div key={p.id} className="border border-neutral-200 p-6 dark:border-neutral-800">
             {editingId === p.id ? (
               // Inline edit form for the selected product
               <ProductForm
@@ -180,22 +189,22 @@ function AdminProducts() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-serif text-lg">{p.name}</p>
-                  <p className="text-xs text-neutral-400 mt-1">
+                  <p className="mt-1 text-xs text-neutral-400">
                     ${(p.price / 100).toFixed(2)} — Stock: {p.stock}
                   </p>
-                  {p.category && (
-                    <p className="text-xs text-neutral-500 mt-1">{p.category.name}</p>
-                  )}
+                  {p.category && <p className="mt-1 text-xs text-neutral-500">{p.category.name}</p>}
                 </div>
                 <div className="flex items-center gap-3">
                   {/* Badge indicating whether the product is featured or standard */}
-                  <span className={`text-xs uppercase tracking-wider ${p.isFeatured ? "text-green-600" : "text-neutral-400"}`}>
+                  <span
+                    className={`text-xs tracking-wider uppercase ${p.isFeatured ? "text-green-600" : "text-neutral-400"}`}
+                  >
                     {p.isFeatured ? "Featured" : "Standard"}
                   </span>
                   {/* Switch to edit mode for this product */}
                   <button
                     onClick={() => setEditingId(p.id)}
-                    className="text-xs uppercase tracking-widest text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 transition-colors"
+                    className="text-xs tracking-widest text-neutral-400 uppercase transition-colors hover:text-neutral-950 dark:hover:text-neutral-50"
                   >
                     Edit
                   </button>
@@ -206,7 +215,7 @@ function AdminProducts() {
                         deleteProduct.mutate({ id: p.id });
                       }
                     }}
-                    className="text-xs uppercase tracking-widest text-red-400 hover:text-red-600 transition-colors"
+                    className="text-xs tracking-widest text-red-400 uppercase transition-colors hover:text-red-600"
                   >
                     Delete
                   </button>
@@ -256,7 +265,7 @@ function ProductForm({
   const [isFeatured, setIsFeatured] = useState(product?.isFeatured ?? false);
   // Sizes are stored as comma-separated "ml:price" pairs for simple text input
   const [sizesStr, setSizesStr] = useState(
-    product ? product.sizes.map((s) => `${s.ml}:${s.price}`).join(", ") : ""
+    product ? product.sizes.map((s) => `${s.ml}:${s.price}`).join(", ") : "",
   );
 
   const utils = api.useUtils();
@@ -314,73 +323,90 @@ function ProductForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border border-neutral-200 dark:border-neutral-800 p-6 mb-8 space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="mb-8 space-y-4 border border-neutral-200 p-6 dark:border-neutral-800"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Product name — required field */}
         <div>
-          <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Name</label>
+          <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+            Name
+          </label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+            className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
           />
         </div>
         {/* URL slug — auto-populated from name via slugify if left empty */}
         <div>
-          <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Slug</label>
+          <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+            Slug
+          </label>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
-            className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+            className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
           />
         </div>
       </div>
 
       {/* Description — multi-line textarea */}
       <div>
-        <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Description</label>
+        <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+          Description
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none resize-none"
+          className="w-full resize-none border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* Price stored in cents (e.g. 9500 = $95.00) — required */}
         <div>
-          <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Price (cents)</label>
+          <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+            Price (cents)
+          </label>
           <input
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             required
             type="number"
-            className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+            className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
           />
         </div>
         {/* Available stock count */}
         <div>
-          <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Stock</label>
+          <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+            Stock
+          </label>
           <input
             value={stock}
             onChange={(e) => setStock(e.target.value)}
             type="number"
-            className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+            className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
           />
         </div>
         {/* Category selector — dropdown populated from the categories query */}
         <div>
-          <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Category</label>
+          <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+            Category
+          </label>
           <select
             value={categoryId ?? ""}
             onChange={(e) => setCategoryId(e.target.value ? Number(e.target.value) : null)}
-            className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+            className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
           >
             <option value="">None</option>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
             ))}
           </select>
         </div>
@@ -388,23 +414,25 @@ function ProductForm({
 
       {/* Scent notes (free text, e.g. "Bergamot, Lavender, Sandalwood") */}
       <div>
-        <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">Scent Notes</label>
+        <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
+          Scent Notes
+        </label>
         <input
           value={scentNotes}
           onChange={(e) => setScentNotes(e.target.value)}
-          className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+          className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
         />
       </div>
 
       {/* Size variants — comma-separated "ml:price in cents" pairs */}
       <div>
-        <label className="text-xs uppercase tracking-widest text-neutral-400 mb-1 block">
+        <label className="mb-1 block text-xs tracking-widest text-neutral-400 uppercase">
           Sizes (format: ml:price, e.g. 50:9500, 100:14500)
         </label>
         <input
           value={sizesStr}
           onChange={(e) => setSizesStr(e.target.value)}
-          className="w-full border border-neutral-200 dark:border-neutral-800 bg-transparent px-3 py-2 text-sm focus:outline-none"
+          className="w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm focus:outline-none dark:border-neutral-800"
         />
       </div>
 
@@ -416,21 +444,21 @@ function ProductForm({
           onChange={(e) => setIsFeatured(e.target.checked)}
           className="accent-neutral-950 dark:accent-neutral-50"
         />
-        <span className="text-xs uppercase tracking-widest text-neutral-400">Featured</span>
+        <span className="text-xs tracking-widest text-neutral-400 uppercase">Featured</span>
       </label>
 
       {/* Form actions: submit (create/update) and cancel */}
       <div className="flex gap-3">
         <button
           type="submit"
-          className="px-6 py-3 bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950 text-xs uppercase tracking-widest hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+          className="bg-neutral-950 px-6 py-3 text-xs tracking-widest text-neutral-50 uppercase transition-colors hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
         >
           {isEdit ? "Update" : "Create"} Product
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="px-6 py-3 border border-neutral-200 dark:border-neutral-800 text-xs uppercase tracking-widest transition-colors"
+          className="border border-neutral-200 px-6 py-3 text-xs tracking-widest uppercase transition-colors dark:border-neutral-800"
         >
           Cancel
         </button>
@@ -456,14 +484,13 @@ function AdminOrders() {
   return (
     <div className="space-y-4">
       {orders?.map((o) => (
-        <div key={o.id} className="border border-neutral-200 dark:border-neutral-800 p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div key={o.id} className="border border-neutral-200 p-6 dark:border-neutral-800">
+          <div className="mb-4 flex items-center justify-between">
             {/* Order summary: ID, customer name/email, and creation date */}
             <div>
               <p className="text-sm font-medium">Order #{o.id}</p>
               <p className="text-xs text-neutral-400">
-                {o.user?.name ?? o.user?.email} —{" "}
-                {new Date(o.createdAt).toLocaleDateString()}
+                {o.user?.name ?? o.user?.email} — {new Date(o.createdAt).toLocaleDateString()}
               </p>
             </div>
             {/* Status dropdown — changing the selection immediately fires the update mutation */}
@@ -473,10 +500,15 @@ function AdminOrders() {
                 onChange={(e) =>
                   updateStatus.mutate({
                     id: o.id,
-                    status: e.target.value as "pending" | "paid" | "shipped" | "delivered" | "cancelled",
+                    status: e.target.value as
+                      | "pending"
+                      | "paid"
+                      | "shipped"
+                      | "delivered"
+                      | "cancelled",
                   })
                 }
-                className="bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-1 text-xs uppercase tracking-wider"
+                className="border border-neutral-200 bg-transparent px-3 py-1 text-xs tracking-wider uppercase dark:border-neutral-800"
               >
                 <option value="pending">Pending</option>
                 <option value="paid">Paid</option>
@@ -491,9 +523,7 @@ function AdminOrders() {
             {o.items.map((i) => `${i.productName} (${i.size}ml) × ${i.quantity}`).join(", ")}
           </div>
           {/* Total amount formatted as dollars */}
-          <div className="mt-2 text-sm font-medium">
-            ${(o.totalAmount / 100).toFixed(2)}
-          </div>
+          <div className="mt-2 text-sm font-medium">${(o.totalAmount / 100).toFixed(2)}</div>
         </div>
       ))}
     </div>

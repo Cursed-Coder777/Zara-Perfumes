@@ -1,6 +1,7 @@
 "use client";
 
 import InfiniteMenu from "~/components/ui/InfiniteMenu";
+import { usePageTitle } from "~/lib/use-page-title";
 
 /** Array of card objects passed to the InfiniteMenu component.
  *  Each entry provides an image URL, a click-through link, and display text. */
@@ -33,9 +34,10 @@ const items = [
 
 /** Full-screen about page that renders the InfiniteMenu as a hero animation. */
 export default function AboutPage() {
+  usePageTitle("About");
   return (
     // Fixed full-screen container so the menu covers the entire viewport
-    <div className="fixed inset-0 w-screen h-screen">
+    <div className="fixed inset-0 h-screen w-screen">
       <InfiniteMenu items={items} scale={3} />
     </div>
   );

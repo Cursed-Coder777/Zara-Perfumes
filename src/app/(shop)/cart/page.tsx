@@ -5,11 +5,13 @@
 import { api } from "~/trpc/react";
 // Import useSession to check if the user is authenticated before showing cart
 import { useSession } from "~/lib/use-session";
+import { usePageTitle } from "~/lib/use-page-title";
 // Import Link for client-side navigation to auth and product pages
 import Link from "next/link";
 
 // CartPage displays the user's shopping cart with item list, quantity controls, order summary, and checkout link
 export default function CartPage() {
+  usePageTitle("Shopping Cart");
   // Fetch the current session — cart data only loads when the user is authenticated
   const { data: session } = useSession();
   // Query the user's cart items via tRPC; only enabled when a session exists
@@ -30,12 +32,15 @@ export default function CartPage() {
   // If the user is not signed in, show a prompt with a link to the sign-in page
   if (!session) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center pt-32">
         <div className="text-center">
-          <p className="text-sm uppercase tracking-widest text-neutral-400 mb-4">
+          <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
             Sign in to view your cart
           </p>
-          <Link href="/auth" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 text-xs">
+          <Link
+            href="/auth"
+            className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+          >
             Sign In
           </Link>
         </div>
@@ -46,8 +51,8 @@ export default function CartPage() {
   // Show a loading indicator while cart items are being fetched
   if (isLoading) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
-        <div className="text-sm uppercase tracking-widest text-neutral-400">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center pt-32">
+        <div className="text-sm tracking-widest text-neutral-400 uppercase">Loading...</div>
       </div>
     );
   }
@@ -60,31 +65,34 @@ export default function CartPage() {
 
   // Render the cart page with item list, quantity controls, and order summary sidebar
   return (
-    <div className="pt-32 pb-16 md:pb-24 min-h-screen">
+    <div className="min-h-screen pt-32 pb-16 md:pb-24">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         {/* Page header with "Your Selection" label and "Shopping Cart" title */}
         <div className="mb-12 md:mb-16">
-          <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
-            Your Selection
-          </p>
-          <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight">Shopping Cart</h1>
+          <p className="mb-3 text-xs tracking-[0.3em] text-neutral-400 uppercase">Your Selection</p>
+          <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-5xl">
+            Shopping Cart
+          </h1>
         </div>
 
         {/* If the cart is empty, show an empty state with a link to browse products */}
         {!cartItems?.length ? (
           <div className="py-24 text-center">
-            <p className="text-neutral-400 text-sm uppercase tracking-widest mb-4">
+            <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
               Your cart is empty
             </p>
-            <Link href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 text-xs">
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+            >
               Browse Fragrances
             </Link>
           </div>
         ) : (
           // Cart content layout: 2/3 width for item list, 1/3 for order summary
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
             {/* Cart items list — takes 2 of 3 columns on large screens */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               {cartItems.map((item) => {
                 // Find the selected size's price for this item, or fall back to the base product price
                 const size = item.product.sizes.find((s) => s.ml === item.size);
@@ -94,10 +102,10 @@ export default function CartPage() {
                   // Individual cart item row with product image, info, quantity controls, and remove button
                   <div
                     key={item.id}
-                    className="flex gap-6 pb-6 border-b border-neutral-200 dark:border-neutral-800"
+                    className="flex gap-6 border-b border-neutral-200 pb-6 dark:border-neutral-800"
                   >
                     {/* Product thumbnail image or placeholder Z logo */}
-                    <div className="w-24 h-32 bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 overflow-hidden">
+                    <div className="h-32 w-24 flex-shrink-0 overflow-hidden bg-neutral-100 dark:bg-neutral-900">
                       {item.product.images[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -119,14 +127,12 @@ export default function CartPage() {
                         {/* Product name linking to the product detail page */}
                         <Link
                           href={`/products/${item.product.slug}`}
-                          className="font-serif text-lg hover:opacity-60 transition-opacity"
+                          className="font-serif text-lg transition-opacity hover:opacity-60"
                         >
                           {item.product.name}
                         </Link>
                         {/* Display the selected size in ml */}
-                        <p className="text-xs text-neutral-400 mt-1">
-                          {item.size}ml
-                        </p>
+                        <p className="mt-1 text-xs text-neutral-400">{item.size}ml</p>
                       </div>
                       {/* Bottom row: quantity controls (-/+) and price with remove button */}
                       <div className="flex items-center justify-between">
@@ -139,16 +145,16 @@ export default function CartPage() {
                                 quantity: Math.max(0, item.quantity - 1),
                               })
                             }
-                            className="w-8 h-8 border border-neutral-200 dark:border-neutral-800 text-sm"
+                            className="h-8 w-8 border border-neutral-200 text-sm dark:border-neutral-800"
                           >
                             −
                           </button>
-                          <span className="text-sm w-6 text-center">{item.quantity}</span>
+                          <span className="w-6 text-center text-sm">{item.quantity}</span>
                           <button
                             onClick={() =>
                               updateQty.mutate({ id: item.id, quantity: item.quantity + 1 })
                             }
-                            className="w-8 h-8 border border-neutral-200 dark:border-neutral-800 text-sm"
+                            className="h-8 w-8 border border-neutral-200 text-sm dark:border-neutral-800"
                           >
                             +
                           </button>
@@ -160,7 +166,7 @@ export default function CartPage() {
                           </span>
                           <button
                             onClick={() => removeItem.mutate({ id: item.id })}
-                            className="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50 uppercase tracking-widest transition-colors"
+                            className="text-xs tracking-widest text-neutral-400 uppercase transition-colors hover:text-neutral-950 dark:hover:text-neutral-50"
                           >
                             Remove
                           </button>
@@ -174,9 +180,9 @@ export default function CartPage() {
 
             {/* Order summary sidebar — subtotal, shipping note, and checkout button */}
             <div className="lg:col-span-1">
-              <div className="border border-neutral-200 dark:border-neutral-800 p-8">
-                <h2 className="text-sm uppercase tracking-widest mb-6">Order Summary</h2>
-                <div className="space-y-3 mb-6">
+              <div className="border border-neutral-200 p-8 dark:border-neutral-800">
+                <h2 className="mb-6 text-sm tracking-widest uppercase">Order Summary</h2>
+                <div className="mb-6 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-neutral-500">Subtotal</span>
                     <span>${(total / 100).toFixed(2)}</span>
@@ -186,9 +192,12 @@ export default function CartPage() {
                     <span>Calculated at checkout</span>
                   </div>
                 </div>
-                <div className="h-px w-full bg-neutral-200 dark:bg-neutral-800 mb-6" />
+                <div className="mb-6 h-px w-full bg-neutral-200 dark:bg-neutral-800" />
                 {/* Checkout link navigates to the checkout page */}
-                <Link href="/checkout" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 w-full text-center">
+                <Link
+                  href="/checkout"
+                  className="inline-flex w-full items-center justify-center bg-neutral-950 px-8 py-3 text-center text-sm font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+                >
                   Checkout
                 </Link>
               </div>

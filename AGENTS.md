@@ -13,20 +13,24 @@ Premium perfume e-commerce built with Next.js 15 App Router, tRPC v11, Drizzle O
 - TypeScript with strict mode (`noUncheckedIndexedAccess`)
 - Path aliases: `~/*` maps to `./src/*`
 - ES Modules (`"type": "module"`)
-- Prettier for formatting with Tailwind CSS plugin
-- ESLint with `eslint-config-next` and `eslint-plugin-drizzle`
+- Prettier for formatting with `prettier-plugin-tailwindcss` + `prettier-plugin-packagejson`
+- ESLint: `eslint-config-next`, `eslint-plugin-drizzle`, `eslint-plugin-simple-import-sort`, `eslint-plugin-unused-imports`, `perfectionist`
 
 ### Database
 - PostgreSQL via `postgres` driver + Drizzle ORM
-- Custom tables use `zara_` prefix via `createTable` helper
+- Custom tables use `zara_` prefix via `createTable` helper (defined in schema.ts)
 - better-auth default tables (user, session, account, verification) are unprefixed
-- Run `pnpm db:push` to sync schema, `pnpm db:studio` for GUI
+- `scripts/seed.ts` populates categories and products — run with `pnpm tsx scripts/seed.ts`
+- `pnpm db:push` to sync schema, `pnpm db:studio` for GUI
+- `pnpm db:generate` for SQL migrations, `pnpm db:migrate` to apply them
 
 ### Authentication
 - better-auth with Drizzle adapter
-- Providers: email/password, Google OAuth, GitHub OAuth
+- Providers: email/password, Google OAuth, GitHub OAuth (+ username auth enabled)
 - Role field on user: `customer` (default) or `admin`
 - Session enriched with DB role via tRPC `protectedProcedure` middleware
+- Cookie cache enabled (5 min) for reduced DB reads
+- Auth instance is lazy-initialized via `getAuth()` to avoid crash during build
 
 ### API Layer
 - tRPC v11 with SuperJSON transformer
@@ -34,7 +38,8 @@ Premium perfume e-commerce built with Next.js 15 App Router, tRPC v11, Drizzle O
 - Context creates session from headers via `better-auth`
 - `publicProcedure` — no auth required
 - `protectedProcedure` — auth required, session has `role`
-- Admin routes check `session.user.role === "admin"` manually
+- `adminRouter` uses `publicProcedure` (no server-side role check). Admin page is gated by a client-side hardcoded password (`"password"` in sessionStorage). Replace with real auth for production.
+- `post` router is a leftover from the T3 template — can be removed
 
 ### Frontend
 - Tailwind CSS v4 with `@import "tailwindcss"`
@@ -44,6 +49,9 @@ Premium perfume e-commerce built with Next.js 15 App Router, tRPC v11, Drizzle O
 - Client components in `"use client"` files for interactivity
 - Server components for data fetching with tRPC server caller
 - Hero section uses Ferrofluid WebGL fluid animation (`src/components/ui/Ferrofluid.tsx`) with OGL
+- Lenis smooth scroll library (`src/lib/lenis.ts`)
+- CursorFollower component in root layout (`src/components/ui/CursorFollower.tsx`)
+- tRPC `timingMiddleware` adds artificial delay in dev (can be disabled)
 - React Bits components installed via shadcn CLI (`pnpm dlx shadcn@latest add @react-bits/ComponentName`)
 
 ### Page Transitions
@@ -60,7 +68,7 @@ Premium perfume e-commerce built with Next.js 15 App Router, tRPC v11, Drizzle O
 
 ### Payments
 - Stripe Checkout for payment processing
-- `src/lib/stripe.ts` initializes Stripe with secret key
+- `src/lib/stripe.ts` initializes Stripe with secret key via lazy `getStripe()` (avoids build crash)
 - Webhook at `/api/stripe/webhook` updates order status on payment success
 
 ### Cart & Checkout
@@ -82,6 +90,8 @@ pnpm lint         # ESLint only
 pnpm typecheck    # TypeScript only
 pnpm db:push      # Push schema to database
 pnpm db:studio    # Open Drizzle Studio
+pnpm db:generate  # Generate SQL migration
+pnpm db:migrate   # Apply pending migrations
 ```
 
 ### File Organization

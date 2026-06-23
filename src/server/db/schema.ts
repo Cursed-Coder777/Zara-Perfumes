@@ -1,14 +1,7 @@
 // Import Drizzle ORM utilities for declaring relations (one-to-many, many-to-one) between tables
 import { relations } from "drizzle-orm";
 // Import PostgreSQL-specific column types and table creators from Drizzle
-import {
-  boolean,
-  json,
-  pgTable,
-  pgTableCreator,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { boolean, json, pgTable, pgTableCreator, text, timestamp } from "drizzle-orm/pg-core";
 
 // Create a custom table factory that prefixes every table name with "zara_" to namespace them in the database
 export const createTable = pgTableCreator((name) => `zara_${name}`);
@@ -108,13 +101,9 @@ export const verification = pgTable("verification", {
   // When this verification token expires
   expiresAt: timestamp("expires_at").notNull(),
   // When this verification record was created
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
+  createdAt: timestamp("created_at").$defaultFn(() => /* @__PURE__ */ new Date()),
   // When this verification record was last updated
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
+  updatedAt: timestamp("updated_at").$defaultFn(() => /* @__PURE__ */ new Date()),
 });
 
 // ── Business tables (prefixed with zara_) ────────────────────────────────────
@@ -132,7 +121,10 @@ export const category = createTable("category", (d) => ({
   // Optional image URL for the category hero/banner
   image: d.text(),
   // Timestamp with timezone set on creation; auto-defaults to the current date
-  createdAt: d.timestamp({ withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
   // Timestamp updated automatically whenever the row is modified
   updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
 }));
@@ -162,7 +154,10 @@ export const product = createTable("product", (d) => ({
   // Flag to mark this product for display on the homepage featured section
   isFeatured: d.boolean().default(false).notNull(),
   // Timestamp of product creation, auto-set to the current date
-  createdAt: d.timestamp({ withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
   // Timestamp auto-updated on every modification
   updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
 }));
@@ -172,15 +167,24 @@ export const cartItem = createTable("cart_item", (d) => ({
   // Auto-incrementing primary key
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   // Foreign key to the user who owns this cart item; cascade deletes with user
-  userId: d.text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId: d
+    .text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   // Foreign key to the product being added; cascade deletes with product
-  productId: d.integer("product_id").notNull().references(() => product.id, { onDelete: "cascade" }),
+  productId: d
+    .integer("product_id")
+    .notNull()
+    .references(() => product.id, { onDelete: "cascade" }),
   // The selected bottle size in millilitres (e.g., 50)
   size: d.integer().notNull(),
   // Quantity of this product selected; defaults to 1
   quantity: d.integer().default(1).notNull(),
   // Timestamp when the item was added to cart
-  createdAt: d.timestamp({ withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
   // Timestamp of the last quantity or size change
   updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
 }));
@@ -190,7 +194,10 @@ export const order = createTable("order", (d) => ({
   // Auto-incrementing primary key
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   // Foreign key to the user who placed the order; cascade deletes with user
-  userId: d.text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId: d
+    .text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   // Order status: "pending", "paid", "shipped", "delivered", "cancelled"; defaults to "pending"
   status: d.varchar({ length: 20 }).default("pending").notNull(),
   // Total amount paid in cents, calculated from the sum of order items
@@ -208,7 +215,10 @@ export const order = createTable("order", (d) => ({
   // Country for shipping
   shippingCountry: d.text("shipping_country"),
   // Timestamp when the order was placed
-  createdAt: d.timestamp({ withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
   // Timestamp when the order was last updated (e.g., status change)
   updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
 }));
@@ -218,7 +228,10 @@ export const orderItem = createTable("order_item", (d) => ({
   // Auto-incrementing primary key
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   // Foreign key to the parent order; cascade deletes with order
-  orderId: d.integer("order_id").notNull().references(() => order.id, { onDelete: "cascade" }),
+  orderId: d
+    .integer("order_id")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
   // Foreign key to the product; set to null if the product is later deleted (preserves history)
   productId: d.integer("product_id").references(() => product.id, { onDelete: "set null" }),
   // Snapshot of the product name at the time of purchase (survives product deletion/rename)
@@ -232,7 +245,10 @@ export const orderItem = createTable("order_item", (d) => ({
   // Quantity ordered of this item
   quantity: d.integer().notNull(),
   // Timestamp when this line item was created (same as the order time)
-  createdAt: d.timestamp({ withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
 }));
 
 // ── Drizzle Relations ────────────────────────────────────────────────────────

@@ -15,12 +15,12 @@ export default function HeroSection() {
         Hero section container — relative positioned so the absolute-filled
         Ferrofluid canvas fills the background while the content z-index stays above
       */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 md:px-12 overflow-hidden">
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 md:px-12">
         {/*
           Ferrofluid background — absolutely positioned to fill the entire hero section,
           renders a white-on-transparent fluid simulation that follows the cursor
         */}
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 h-full w-full">
           {/* Three white color stops produce a monochrome fluid animation that stays subtle and premium */}
           {/* Slow animation speed for a calm, elegant fluid motion */}
           {/* Slightly enlarged scale to spread the fluid contours across the viewport */}
@@ -55,29 +55,32 @@ export default function HeroSection() {
         {/*
           Content overlay — centered above the Ferrofluid canvas using relative positioning and z-index
         */}
-        <div className="relative z-10 text-center max-w-4xl mx-auto">
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           {/* Small muted "Est. 2025" label above the hero heading to establish brand heritage */}
-          <p className="text-xs uppercase tracking-[0.3em] mb-6 text-neutral-400">
-            Est. 2025
-          </p>
+          <p className="mb-6 text-xs tracking-[0.3em] text-neutral-400 uppercase">Est. 2025</p>
           {/* Main hero heading using the serif font, split across two lines for visual impact */}
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tight leading-none mb-8">
+          <h1 className="mb-8 font-serif text-5xl leading-none tracking-tight md:text-7xl lg:text-8xl">
             Fragrance
             <br />
-            <span className="text-neutral-300 dark:text-neutral-600">Defines</span>
-            {" "}Presence
+            <span className="text-neutral-300 dark:text-neutral-600">Defines</span> Presence
           </h1>
           {/* Supporting paragraph describing the brand's value proposition — curated, elegant, sophisticated */}
-          <p className="text-base md:text-lg text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto mb-12 leading-relaxed">
-            Curated perfumes crafted for those who understand the power of scent.
-            Each bottle tells a story of elegance and sophistication.
+          <p className="mx-auto mb-12 max-w-xl text-base leading-relaxed text-neutral-500 md:text-lg dark:text-neutral-400">
+            Curated perfumes crafted for those who understand the power of scent. Each bottle tells
+            a story of elegance and sophistication.
           </p>
           {/* Call-to-action buttons: primary filled link to /products, secondary outlined link to #featured */}
           <div className="flex items-center justify-center gap-4">
-            <TransitionLink href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200">
+            <TransitionLink
+              href="/products"
+              className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+            >
               Explore Collection
             </TransitionLink>
-            <Link href="#featured" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 border border-neutral-950 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950">
+            <Link
+              href="#featured"
+              className="inline-flex items-center justify-center border border-neutral-950 px-8 py-3 text-sm font-medium tracking-widest text-neutral-950 uppercase transition-all duration-300 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950"
+            >
               View Featured
             </Link>
           </div>

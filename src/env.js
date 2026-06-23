@@ -12,10 +12,7 @@ export const env = createEnv({
   // Define the schema for server-only environment variables (never exposed to the client bundle)
   server: {
     // Auth secret for better-auth; optional in dev so new contributors don't need it immediately
-    BETTER_AUTH_SECRET:
-      process.env.NODE_ENV === "production"
-        ? z.string()
-        : z.string().optional(),
+    BETTER_AUTH_SECRET: process.env.NODE_ENV === "production" ? z.string() : z.string().optional(),
     // Base URL for better-auth (e.g., http://localhost:3000 or https://your-domain.vercel.app)
     BETTER_AUTH_URL: z.string().url(),
     // GitHub OAuth app client ID for social login
@@ -33,9 +30,7 @@ export const env = createEnv({
     // Stripe webhook signing secret for verifying incoming webhook events
     STRIPE_WEBHOOK_SECRET: z.string(),
     // Current Node environment; defaults to "development" for safety
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   },
 
   /**
@@ -58,16 +53,13 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     BETTER_AUTH_GITHUB_CLIENT_ID: process.env.BETTER_AUTH_GITHUB_CLIENT_ID,
-    BETTER_AUTH_GITHUB_CLIENT_SECRET:
-      process.env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
+    BETTER_AUTH_GITHUB_CLIENT_SECRET: process.env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
     BETTER_AUTH_GOOGLE_CLIENT_ID: process.env.BETTER_AUTH_GOOGLE_CLIENT_ID,
-    BETTER_AUTH_GOOGLE_CLIENT_SECRET:
-      process.env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
+    BETTER_AUTH_GOOGLE_CLIENT_SECRET: process.env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

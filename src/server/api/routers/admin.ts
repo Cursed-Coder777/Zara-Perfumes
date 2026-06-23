@@ -3,10 +3,7 @@ import { z } from "zod";
 // Import Drizzle ORM helpers for building SQL WHERE equality and sort clauses
 import { eq, desc } from "drizzle-orm";
 // Import tRPC utilities: router factory and public (unauthenticated) procedure builder
-import {
-  createTRPCRouter,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // Import Drizzle schema objects for the product, category, and order database tables
 import { product, category, order } from "~/server/db/schema";
 
@@ -71,12 +68,10 @@ export const adminRouter = createTRPCRouter({
       }),
 
     /** Public procedure: hard-delete a product by its primary-key ID. */
-    delete: publicProcedure
-      .input(z.object({ id: z.number() }))
-      .mutation(async ({ ctx, input }) => {
-        // Destroy the row matching the given product ID
-        await ctx.db.delete(product).where(eq(product.id, input.id));
-      }),
+    delete: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+      // Destroy the row matching the given product ID
+      await ctx.db.delete(product).where(eq(product.id, input.id));
+    }),
   },
 
   /** Admin procedures for reading and creating product categories. */
@@ -125,10 +120,7 @@ export const adminRouter = createTRPCRouter({
       )
       .mutation(async ({ ctx, input }) => {
         // Set only the status column on the matching order row
-        await ctx.db
-          .update(order)
-          .set({ status: input.status })
-          .where(eq(order.id, input.id));
+        await ctx.db.update(order).set({ status: input.status }).where(eq(order.id, input.id));
       }),
   },
 });

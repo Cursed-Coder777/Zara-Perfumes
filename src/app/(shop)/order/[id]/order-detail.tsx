@@ -33,12 +33,13 @@ export function OrderDetail({ order }: { order: OrderData }) {
   // If the order is null (not found), show a "not found" state with a link back to products
   if (!order) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center pt-32">
         <div className="text-center">
-          <p className="text-sm uppercase tracking-widest text-neutral-400 mb-4">
-            Order not found
-          </p>
-          <Link href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 border border-neutral-950 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950 text-xs">
+          <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">Order not found</p>
+          <Link
+            href="/products"
+            className="inline-flex items-center justify-center border border-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-950 uppercase transition-all duration-300 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950"
+          >
             Continue Shopping
           </Link>
         </div>
@@ -56,25 +57,27 @@ export function OrderDetail({ order }: { order: OrderData }) {
   };
 
   return (
-    <div className="pt-32 pb-16 md:pb-24 min-h-screen">
-      <div className="mx-auto max-w-7xl px-6 md:px-12 max-w-3xl">
+    <div className="min-h-screen pt-32 pb-16 md:pb-24">
+      <div className="mx-auto max-w-3xl max-w-7xl px-6 md:px-12">
         {/* Thank you header — shows confirmation label, "Thank You" title, and order number */}
         <div className="mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
-            Confirmation
-          </p>
-          <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight mb-2">Thank You</h1>
-          <p className="text-neutral-500 text-sm">
+          <p className="mb-3 text-xs tracking-[0.3em] text-neutral-400 uppercase">Confirmation</p>
+          <h1 className="mb-2 font-serif text-3xl leading-tight tracking-tight md:text-5xl">
+            Thank You
+          </h1>
+          <p className="text-sm text-neutral-500">
             Your order has been confirmed. Order #{order.id}
           </p>
         </div>
 
         {/* Order details card — lists items with prices and shows the total */}
-        <div className="border border-neutral-200 dark:border-neutral-800 p-8 mb-8">
+        <div className="mb-8 border border-neutral-200 p-8 dark:border-neutral-800">
           {/* Header row with "Order Details" title and the current status badge */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-sm uppercase tracking-widest">Order Details</h2>
-            <span className={`text-sm font-medium uppercase tracking-wider ${statusColors[order.status] ?? ""}`}>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-sm tracking-widest uppercase">Order Details</h2>
+            <span
+              className={`text-sm font-medium tracking-wider uppercase ${statusColors[order.status] ?? ""}`}
+            >
               {order.status}
             </span>
           </div>
@@ -92,7 +95,7 @@ export function OrderDetail({ order }: { order: OrderData }) {
           </div>
 
           {/* Divider and total row */}
-          <div className="h-px w-full bg-neutral-200 dark:bg-neutral-800 my-6" />
+          <div className="my-6 h-px w-full bg-neutral-200 dark:bg-neutral-800" />
 
           <div className="flex justify-between text-sm font-medium">
             <span>Total</span>
@@ -102,12 +105,15 @@ export function OrderDetail({ order }: { order: OrderData }) {
 
         {/* Shipping details card — conditionally shown if shippingName is present, displays name, address, city, postal code, and country */}
         {order.shippingName && (
-          <div className="border border-neutral-200 dark:border-neutral-800 p-8 mb-8">
-            <h2 className="text-sm uppercase tracking-widest mb-4">Shipping To</h2>
-            <p className="text-sm text-neutral-500 leading-relaxed">
-              {order.shippingName}<br />
-              {order.shippingAddress}<br />
-              {order.shippingCity}, {order.shippingPostalCode}<br />
+          <div className="mb-8 border border-neutral-200 p-8 dark:border-neutral-800">
+            <h2 className="mb-4 text-sm tracking-widest uppercase">Shipping To</h2>
+            <p className="text-sm leading-relaxed text-neutral-500">
+              {order.shippingName}
+              <br />
+              {order.shippingAddress}
+              <br />
+              {order.shippingCity}, {order.shippingPostalCode}
+              <br />
               {order.shippingCountry}
             </p>
           </div>
@@ -115,7 +121,10 @@ export function OrderDetail({ order }: { order: OrderData }) {
 
         {/* "Continue Shopping" button centered at the bottom of the page */}
         <div className="text-center">
-          <Link href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 text-xs">
+          <Link
+            href="/products"
+            className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+          >
             Continue Shopping
           </Link>
         </div>

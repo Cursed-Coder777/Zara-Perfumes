@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 // Import tRPC server helpers (api caller + HydrateClient) for server-side data fetching and hydration
 import { api, HydrateClient } from "~/trpc/server";
 // Import the client-side ProductsPage component to render the interactive product grid and filters
 import { ProductsPage } from "./products-page";
+
+export const metadata: Metadata = {
+  title: "All Fragrances",
+};
 
 // Products is an async server component that fetches products and categories based on search params, then passes them to the client component
 export default async function Products({

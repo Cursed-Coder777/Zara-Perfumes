@@ -3,10 +3,7 @@ import { z } from "zod";
 // Import Drizzle helpers for building WHERE clauses and DESC sorting
 import { eq, desc } from "drizzle-orm";
 // Import tRPC utilities: router factory and protected procedure (requires authentication)
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 // Import the Drizzle schema for the order table
 import { order } from "~/server/db/schema";
 

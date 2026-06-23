@@ -3,10 +3,7 @@ import { z } from "zod";
 // Import tRPC's error class to throw structured HTTP-like errors (e.g. BAD_REQUEST)
 import { TRPCError } from "@trpc/server";
 // Import tRPC utilities: router factory and protected procedure (user must be logged in)
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 // Import Drizzle schemas for the cartItem, order, and orderItem tables
 import { cartItem, order, orderItem } from "~/server/db/schema";
 // Import the Drizzle eq helper for building WHERE clauses
@@ -69,7 +66,8 @@ export const checkoutRouter = createTRPCRouter({
           .returning();
 
         // Guard: if the insert didn't return a row, throw an internal error
-        if (!newOrder) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create order" });
+        if (!newOrder)
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create order" });
 
         // Insert one orderItem row per cart item, snapshotting product details at purchase time
         await tx.insert(orderItem).values(
@@ -96,16 +94,15 @@ export const checkoutRouter = createTRPCRouter({
         );
 
         // Clear the user's cart now that the order has been created from it
-        await tx
-          .delete(cartItem)
-          .where(eq(cartItem.userId, ctx.session.user.id));
+        await tx.delete(cartItem).where(eq(cartItem.userId, ctx.session.user.id));
 
         // Return the newly created order so the outer scope can use its ID
         return newOrder;
       });
 
       // Safety check: if the transaction somehow returned undefined, throw an error
-      if (!createdOrder) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create order" });
+      if (!createdOrder)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create order" });
 
       // Create a Stripe Checkout Session for payment collection
       const stripeSession = await getStripe().checkout.sessions.create({

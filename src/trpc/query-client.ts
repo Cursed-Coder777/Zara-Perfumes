@@ -1,8 +1,5 @@
 // Import the defaultShouldDehydrateQuery helper and the QueryClient class from TanStack React Query
-import {
-  defaultShouldDehydrateQuery,
-  QueryClient,
-} from "@tanstack/react-query";
+import { defaultShouldDehydrateQuery, QueryClient } from "@tanstack/react-query";
 // Import SuperJSON for custom serialization/deserialization of complex types (Date, Map, etc.)
 import SuperJSON from "superjson";
 
@@ -20,8 +17,7 @@ export const createQueryClient = () =>
         serializeData: SuperJSON.serialize,
         // Dehydrate a query if the default heuristic says so, OR if the query is still pending (loading state)
         shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === "pending",
+          defaultShouldDehydrateQuery(query) || query.state.status === "pending",
       },
       hydrate: {
         // Use SuperJSON to deserialize query data when rehydrating on the client

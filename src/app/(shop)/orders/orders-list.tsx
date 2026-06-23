@@ -34,23 +34,24 @@ export function OrdersList({ orders }: { orders: Order[] }) {
   };
 
   return (
-    <div className="pt-32 pb-16 md:pb-24 min-h-screen">
-      <div className="mx-auto max-w-7xl px-6 md:px-12 max-w-3xl">
+    <div className="min-h-screen pt-32 pb-16 md:pb-24">
+      <div className="mx-auto max-w-3xl max-w-7xl px-6 md:px-12">
         {/* Page header with "Your Orders" label and "Order History" title */}
         <div className="mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
-            Your Orders
-          </p>
-          <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight">Order History</h1>
+          <p className="mb-3 text-xs tracking-[0.3em] text-neutral-400 uppercase">Your Orders</p>
+          <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-5xl">
+            Order History
+          </h1>
         </div>
 
         {/* If there are no orders, show an empty state with a link to start shopping */}
         {orders.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-neutral-400 text-sm uppercase tracking-widest mb-4">
-              No orders yet
-            </p>
-            <Link href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 text-xs">
+            <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">No orders yet</p>
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+            >
               Start Shopping
             </Link>
           </div>
@@ -61,13 +62,13 @@ export function OrdersList({ orders }: { orders: Order[] }) {
               <Link
                 key={order.id}
                 href={`/order/${order.id}`}
-                className="block border border-neutral-200 dark:border-neutral-800 p-6 hover:border-neutral-950 dark:hover:border-neutral-50 transition-colors"
+                className="block border border-neutral-200 p-6 transition-colors hover:border-neutral-950 dark:border-neutral-800 dark:hover:border-neutral-50"
               >
                 {/* Top row: order ID and date on the left, status badge on the right */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">Order #{order.id}</p>
-                    <p className="text-xs text-neutral-400 mt-1">
+                    <p className="mt-1 text-xs text-neutral-400">
                       {new Date(order.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
@@ -77,7 +78,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
                   </div>
                   {/* Status badge with dynamic color based on the order status */}
                   <span
-                    className={`text-xs font-medium uppercase tracking-wider ${statusColors[order.status] ?? ""}`}
+                    className={`text-xs font-medium tracking-wider uppercase ${statusColors[order.status] ?? ""}`}
                   >
                     {order.status}
                   </span>

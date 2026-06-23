@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 // Import tRPC server helpers for server-side data fetching and hydration
 import { api, HydrateClient } from "~/trpc/server";
 // Import getSession for server-side authentication check — redirects unauthenticated users
@@ -6,6 +7,10 @@ import { getSession } from "~/server/better-auth/server";
 import { redirect } from "next/navigation";
 // Import the client-side OrdersList component to render the order history
 import { OrdersList } from "./orders-list";
+
+export const metadata: Metadata = {
+  title: "Order History",
+};
 
 // OrdersPage is an async server component that checks authentication, fetches the user's orders, then passes them to the client component
 export default async function OrdersPage() {

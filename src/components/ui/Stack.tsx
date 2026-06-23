@@ -1,8 +1,8 @@
 "use client";
 
 // Framer Motion for drag gesture, motion values, and spring animations
-import { motion, useMotionValue, useTransform, type PanInfo } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, type PanInfo } from "motion/react";
+import { useState, useEffect } from "react";
 
 /** Props for the CardRotate sub-component that handles the drag-to-send-back behaviour. */
 interface CardRotateProps {
@@ -48,7 +48,7 @@ function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false }
       style={{ x, y, rotateX, rotateY }}
       drag
       dragElastic={0.6}
-      whileTap={{ cursor: 'grabbing' }}
+      whileTap={{ cursor: "grabbing" }}
       onDragEnd={handleDragEnd}
     >
       {children}
@@ -84,7 +84,7 @@ export default function Stack({
   autoplayDelay = 3000,
   pauseOnHover = false,
   mobileClickOnly = false,
-  mobileBreakpoint = 768
+  mobileBreakpoint = 768,
 }: StackProps) {
   // Track whether the viewport is below the mobile breakpoint (used for click-only mode)
   const [isMobile, setIsMobile] = useState(false);
@@ -98,8 +98,8 @@ export default function Stack({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, [mobileBreakpoint]);
 
   // On mobile with mobileClickOnly enabled, disable drag in favour of tap-to-send
@@ -119,9 +119,9 @@ export default function Stack({
             <img
               src="/images/card-1.jpg"
               alt="card-1"
-              className="w-full h-full object-cover pointer-events-none"
+              className="pointer-events-none h-full w-full object-cover"
             />
-          )
+          ),
         },
         {
           id: 2,
@@ -129,9 +129,9 @@ export default function Stack({
             <img
               src="/images/card-2.jpg"
               alt="card-2"
-              className="w-full h-full object-cover pointer-events-none"
+              className="pointer-events-none h-full w-full object-cover"
             />
-          )
+          ),
         },
         {
           id: 3,
@@ -139,9 +139,9 @@ export default function Stack({
             <img
               src="/images/card-3.jpg"
               alt="card-3"
-              className="w-full h-full object-cover pointer-events-none"
+              className="pointer-events-none h-full w-full object-cover"
             />
-          )
+          ),
         },
         {
           id: 4,
@@ -149,10 +149,10 @@ export default function Stack({
             <img
               src="/images/card-4.jpg"
               alt="card-4"
-              className="w-full h-full object-cover pointer-events-none"
+              className="pointer-events-none h-full w-full object-cover"
             />
-          )
-        }
+          ),
+        },
       ];
     }
   });
@@ -166,9 +166,9 @@ export default function Stack({
 
   /** Move the card with the given ID to the back of the stack. */
   const sendToBack = (id: number) => {
-    setStack(prev => {
+    setStack((prev) => {
       const newStack = [...prev];
-      const index = newStack.findIndex(card => card.id === id);
+      const index = newStack.findIndex((card) => card.id === id);
       const [card] = newStack.splice(index, 1);
       if (card) newStack.unshift(card);
       return newStack;
@@ -189,9 +189,9 @@ export default function Stack({
 
   return (
     <div
-      className="relative w-full h-full"
+      className="relative h-full w-full"
       style={{
-        perspective: 600
+        perspective: 600,
       }}
       // Hover handlers for pause-on-hover autoplay behaviour
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
@@ -208,7 +208,7 @@ export default function Stack({
             disableDrag={shouldDisableDrag}
           >
             <motion.div
-              className="rounded-2xl overflow-hidden w-full h-full"
+              className="h-full w-full overflow-hidden rounded-2xl"
               // Click handler sends card to back when sendToBackOnClick or mobileClickOnly is active
               onClick={() => shouldEnableClick && sendToBack(card.id)}
               animate={{
@@ -216,13 +216,13 @@ export default function Stack({
                 rotateZ: (stack.length - index - 1) * 4 + randomRotate,
                 // Cards further from the top are scaled down slightly
                 scale: 1 + index * 0.06 - stack.length * 0.06,
-                transformOrigin: '90% 90%'
+                transformOrigin: "90% 90%",
               }}
               initial={false}
               transition={{
-                type: 'spring',
+                type: "spring",
                 stiffness: animationConfig.stiffness,
-                damping: animationConfig.damping
+                damping: animationConfig.damping,
               }}
             >
               {card.content}

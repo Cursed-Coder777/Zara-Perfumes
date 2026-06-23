@@ -91,9 +91,7 @@ export const cartRouter = createTRPCRouter({
         // Delete the cart item row, scoped to both the item ID and the current user (ownership check)
         await ctx.db
           .delete(cartItem)
-          .where(
-            and(eq(cartItem.id, input.id), eq(cartItem.userId, ctx.session.user.id)),
-          );
+          .where(and(eq(cartItem.id, input.id), eq(cartItem.userId, ctx.session.user.id)));
         // Early return — no update needed
         return;
       }
@@ -102,9 +100,7 @@ export const cartRouter = createTRPCRouter({
         .update(cartItem)
         .set({ quantity: input.quantity })
         // Scoped to the specific item ID and user ID to prevent cross-user tampering
-        .where(
-          and(eq(cartItem.id, input.id), eq(cartItem.userId, ctx.session.user.id)),
-        );
+        .where(and(eq(cartItem.id, input.id), eq(cartItem.userId, ctx.session.user.id)));
     }),
 
   // Protected procedure: remove a single cart item by its primary key ID
@@ -116,16 +112,12 @@ export const cartRouter = createTRPCRouter({
       // Delete the cart item where the ID matches, ensuring it belongs to the current user
       await ctx.db
         .delete(cartItem)
-        .where(
-          and(eq(cartItem.id, input.id), eq(cartItem.userId, ctx.session.user.id)),
-        );
+        .where(and(eq(cartItem.id, input.id), eq(cartItem.userId, ctx.session.user.id)));
     }),
 
   // Protected procedure: clear all cart items for the currently authenticated user
   clear: protectedProcedure.mutation(async ({ ctx }) => {
     // Delete every cartItem row associated with the current user's ID
-    await ctx.db
-      .delete(cartItem)
-      .where(eq(cartItem.userId, ctx.session.user.id));
+    await ctx.db.delete(cartItem).where(eq(cartItem.userId, ctx.session.user.id));
   }),
 });

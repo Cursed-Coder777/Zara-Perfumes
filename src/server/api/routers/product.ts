@@ -3,10 +3,7 @@ import { z } from "zod";
 // Import Drizzle ORM helpers for building SQL WHERE, LIKE, sort, and compound conditions
 import { eq, like, desc, asc, and } from "drizzle-orm";
 // Import tRPC utilities: router factory, public (unauthenticated), and protected (authenticated) procedure builders
-import {
-  createTRPCRouter,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // Import Drizzle schema objects for the product and category database tables
 import { product, category } from "~/server/db/schema";
 
@@ -58,11 +55,11 @@ export const productRouter = createTRPCRouter({
         // Ascending price sort
         input.sort === "price-asc"
           ? asc(product.price)
-          // Descending price sort
-          : input.sort === "price-desc"
+          : // Descending price sort
+            input.sort === "price-desc"
             ? desc(product.price)
-            // Default: newest products first
-            : desc(product.createdAt);
+            : // Default: newest products first
+              desc(product.createdAt);
 
       // Execute the main products query with the accumulated filters, sort, and pagination
       const items = await ctx.db.query.product.findMany({

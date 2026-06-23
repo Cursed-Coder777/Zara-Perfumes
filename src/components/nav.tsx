@@ -27,10 +27,10 @@ import FlowingMenu from "~/components/FlowingMenu";
 import { motion, AnimatePresence } from "motion/react";
 
 const menuItems = [
-  { link: "/", text: "Home", image: "/images/nav-home.svg" },
-  { link: "/products", text: "Fragrances", image: "/images/nav-fragrances.svg" },
-  { link: "/about", text: "About", image: "/images/nav-about.svg" },
-  { link: "/contact", text: "Contact", image: "/images/nav-contact.svg" },
+  { link: "/", text: "Home", image: "/images/card-2.jpg" },
+  { link: "/products", text: "Fragrances", image: "/images/gallery/gallery-2.jpg" },
+  { link: "/about", text: "About", image: "/images/gallery/gallery-6.jpg" },
+  { link: "/contact", text: "Contact", image: "/images/gallery/gallery-4.jpg" },
 ];
 
 // Nav renders the fixed top navigation bar with logo, links, theme toggle, cart badge, auth controls, and mobile hamburger menu
@@ -80,10 +80,8 @@ export function Nav({ session }: { session: Session | null }) {
   return (
     // Fixed header at the top of the viewport — becomes translucent with backdrop blur when scrolled
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-neutral-950/90 backdrop-blur-md"
-          : "bg-transparent"
+      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-neutral-950/90 backdrop-blur-md" : "bg-transparent"
       }`}
     >
       {/* Inner nav container with max width and centered content */}
@@ -99,7 +97,10 @@ export function Nav({ session }: { session: Session | null }) {
           {session ? (
             <>
               {/* Cart link with a numeric badge showing total item count */}
-              <TransitionLink href="/cart" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 relative p-2 text-sm uppercase tracking-widest">
+              <TransitionLink
+                href="/cart"
+                className="relative inline-flex items-center justify-center p-2 px-8 py-3 text-sm font-medium tracking-widest text-neutral-600 uppercase transition-all duration-300 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50"
+              >
                 Cart
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-950 text-[10px] text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950">
@@ -108,7 +109,10 @@ export function Nav({ session }: { session: Session | null }) {
                 )}
               </TransitionLink>
               {/* Admin link for admin users, Orders link for regular users — links to appropriate page */}
-              <TransitionLink href={session.user.role === "admin" ? "/admin" : "/orders"} className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 p-2 text-sm uppercase tracking-widest">
+              <TransitionLink
+                href={session.user.role === "admin" ? "/admin" : "/orders"}
+                className="inline-flex items-center justify-center p-2 px-8 py-3 text-sm font-medium tracking-widest text-neutral-600 uppercase transition-all duration-300 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50"
+              >
                 {session.user.role === "admin" ? "Admin" : "Orders"}
               </TransitionLink>
               {/* Sign-out button — calls authClient.signOut() then redirects to home */}
@@ -117,21 +121,24 @@ export function Nav({ session }: { session: Session | null }) {
                   await authClient.signOut();
                   router.push("/");
                 }}
-                className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 p-2 text-sm uppercase tracking-widest"
+                className="inline-flex items-center justify-center p-2 px-8 py-3 text-sm font-medium tracking-widest text-neutral-600 uppercase transition-all duration-300 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50"
               >
                 Sign Out
               </button>
             </>
           ) : (
             // If not authenticated, show a "Sign In" link
-            <TransitionLink href="/auth" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 text-xs px-6 py-2">
+            <TransitionLink
+              href="/auth"
+              className="inline-flex items-center justify-center bg-neutral-950 px-6 px-8 py-2 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+            >
               Sign In
             </TransitionLink>
           )}
 
           {/* Hamburger menu toggle — visible on all screen sizes */}
           <button
-            className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50 p-2"
+            className="inline-flex items-center justify-center p-2 px-8 py-3 text-sm font-medium tracking-widest text-neutral-600 uppercase transition-all duration-300 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-50"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             <span className="text-[30px] leading-none">{mobileOpen ? "✕" : "≡"}</span>
@@ -143,7 +150,7 @@ export function Nav({ session }: { session: Session | null }) {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-50 top-0 left-0 w-screen h-screen"
+            className="fixed inset-0 top-0 left-0 z-50 h-screen w-screen"
             initial={{ y: "-100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
@@ -151,7 +158,7 @@ export function Nav({ session }: { session: Session | null }) {
           >
             {/* Close button at top-right of the overlay */}
             <button
-              className="absolute top-6 right-6 z-10 text-2xl text-white hover:text-neutral-300 transition-colors"
+              className="absolute top-6 right-6 z-10 text-2xl text-white transition-colors hover:text-neutral-300"
               onClick={() => setMobileOpen(false)}
             >
               ✕

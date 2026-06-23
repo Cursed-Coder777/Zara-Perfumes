@@ -33,15 +33,16 @@ const playfair = Playfair_Display({
 
 // Export static metadata that Next.js uses to generate <title>, <meta name="description">, and <link rel="icon">
 export const metadata: Metadata = {
-  title: "ZARA | Fragrance",
+  title: {
+    template: "%s | ZARA Fragrance",
+    default: "ZARA | Fragrance",
+  },
   description: "Curated fragrances that define your presence.",
   icons: [{ rel: "icon", url: "/logo.webp" }],
 };
 
 // RootLayout is an async server component that renders the outer HTML shell, fetches the session, and wraps children in all global providers
-export default async function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // Fetch the current user session server-side so the Nav component can render auth-aware links
   // Gracefully handle missing session during static generation/build (no crash on Vercel when env not configured)
   let session: Awaited<ReturnType<typeof getSession>> | null = null;

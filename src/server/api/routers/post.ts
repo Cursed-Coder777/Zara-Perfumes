@@ -2,11 +2,7 @@
 import { z } from "zod";
 
 // Import tRPC utilities: router factory and both public/protected procedure builders
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 // Create and export the legacy boilerplate tRPC router (from the create-t3-app scaffold)
 export const postRouter = createTRPCRouter({

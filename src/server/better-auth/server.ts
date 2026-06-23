@@ -6,6 +6,4 @@ import { headers } from "next/headers";
 import { cache } from "react";
 
 // Create a cached server-side session getter: deduplicates calls during a single request and fetches the session using request headers
-export const getSession = cache(async () =>
-  getAuth().api.getSession({ headers: await headers() }),
-);
+export const getSession = cache(async () => getAuth().api.getSession({ headers: await headers() }));
