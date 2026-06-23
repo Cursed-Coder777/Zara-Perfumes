@@ -15,15 +15,12 @@ type SessionUser = {
 };
 // Type definition for a session — either an object with a user or null
 type Session = { user: SessionUser } | null;
-// Import useRouter for navigation after sign-out and usePathname to highlight the active nav link
-// Import motion + AnimatePresence for overlay enter/exit animations
 import { AnimatePresence,motion } from "motion/react";
+import dynamic from "next/dynamic";
 import { usePathname,useRouter } from "next/navigation";
-// Import useEffect for scroll listener, mobile menu close on route change, and cart count sync; useState for mobile menu and scroll state
 import { useEffect, useMemo, useState } from "react";
 
-// Import FlowingMenu for the full-screen hamburger overlay
-import FlowingMenu from "~/components/FlowingMenu";
+const FlowingMenu = dynamic(() => import("~/components/FlowingMenu"), { ssr: false });
 // Import the tRPC React client for fetching cart items to display the badge count
 import { api } from "~/trpc/react";
 

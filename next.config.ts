@@ -6,8 +6,13 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-// Empty config object — all Next.js defaults are sufficient for the current build requirements
-const config = {};
+const config = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+    ],
+  },
+};
 
 // Export the config as the default so Next.js picks it up automatically
 export default config;

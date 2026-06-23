@@ -1,4 +1,5 @@
-// Import TransitionLink for animated page transitions
+import Image from "next/image";
+
 import { TransitionLink } from "~/components/ui/TransitionLink";
 
 // Type definition for the props that ProductCard receives — id, name, slug, price, images array, and optional scent notes
@@ -17,13 +18,14 @@ export function ProductCard({ name, slug, price, images, scentNotes }: ProductCa
     // Entire card is a TransitionLink to the product detail page, with a vertical flex layout
     <TransitionLink href={`/products/${slug}`} className="group flex flex-col gap-4">
       {/* Product image container with 3:4 aspect ratio and a hover zoom effect */}
-      <div className="aspect-[3/4] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
         {images[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={images[0]}
             alt={name}
-            className="h-full w-full object-cover transition-all duration-700 group-hover:scale-105"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+            className="object-cover transition-all duration-700 group-hover:scale-105"
           />
         ) : (
           // Fallback placeholder when no image is available — shows the brand initial "Z"

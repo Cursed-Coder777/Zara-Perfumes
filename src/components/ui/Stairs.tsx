@@ -1,23 +1,31 @@
 "use client";
 
-// GSAP-based page transition overlay: animates 5 vertical "stair" panels on route change
-// Provides startTransition() via context for use with TransitionLink
-// Also watches for any URL change (pathname + search params) via StairsWatcher so Stairs animation runs on ALL navigations
-import gsap from "gsap";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createContext, Suspense, useCallback, useContext, useLayoutEffect, useRef } from "react";
+
+// GSAP is dynamically imported to keep ~40kB off the critical bundle.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _gsap: any = null;
+async function loadGsap() {
+  if (!_gsap) {
+    const mod = await import("gsap");
+    _gsap = mod.default ?? mod;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return _gsap;
+}
 
 // Context type: provides methods to trigger the stair-animation transition
 // startTransition — navigates then animates (legacy, used by TransitionLink with nav)
 // triggerStairs — animates only, for when navigation is handled separately
 type StairsContextType = {
   startTransition: (navigate: () => void) => void;
-  triggerStairs: () => void;
+  triggerStairs: () => Promise<void>;
 };
 
 const StairsContext = createContext<StairsContextType>({
   startTransition: () => undefined,
-  triggerStairs: () => undefined,
+  triggerStairs: async () => undefined,
 });
 
 export function useStairs() {
@@ -26,55 +34,58 @@ export function useStairs() {
 
 // Stairs component wraps the page content and manages the GSAP timeline for the stair transition overlay
 // On route change, it animates 5 panels from top-to-bottom (cover), then bottom-to-top (reveal)
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 export function Stairs({ children }: { children: React.ReactNode }) {
   const currentPath = usePathname();
   const stairParentRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
   const transitioningRef = useRef(false);
   const initialRef = useRef(true);
-  const pendingTlRef = useRef<gsap.core.Timeline | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pendingTlRef = useRef<any>(null);
   const transitionHandledRef = useRef(false);
 
-  // Plays the stair animation (cover then reveal) without navigation
-  const triggerStairs = useCallback(() => {
+  const triggerStairs = useCallback(async () => {
     if (transitioningRef.current) return;
     transitioningRef.current = true;
     transitionHandledRef.current = false;
 
-    gsap.set(stairParentRef.current, { display: "block" });
-    gsap.set(".stair", { height: "0%", y: "0%" });
-    gsap.set(pageRef.current, { opacity: 0, y: 10 });
+    const g = await loadGsap();
+    g.set(stairParentRef.current, { display: "block" });
+    g.set(".stair", { height: "0%", y: "0%" });
+    g.set(pageRef.current, { opacity: 0, y: 10 });
 
-    const tl = gsap.timeline();
+    const tl = g.timeline();
     tl.to(".stair", {
       height: "100%",
       duration: 0.25,
       stagger: { amount: 0.12 },
       ease: "power3.inOut",
     });
-    // After cover: wait one frame for the new page DOM, then reveal
     tl.call(() => {
       requestAnimationFrame(() => {
-        gsap.to(".stair", {
-          y: "100%",
-          duration: 0.25,
-          stagger: { amount: 0.12 },
-          ease: "power3.inOut",
-          onComplete: () => {
-            gsap.set(stairParentRef.current, { display: "none" });
-            gsap.set(".stair", { y: "0%" });
-            gsap.to(pageRef.current, {
-              opacity: 1,
-              y: 0,
-              duration: 0.2,
-              ease: "power2.out",
-              onComplete: () => {
-                transitioningRef.current = false;
-                pendingTlRef.current = null;
-                transitionHandledRef.current = true;
-              },
-            });
-          },
+        void loadGsap().then((g2) => {
+          g2.to(".stair", {
+            y: "100%",
+            duration: 0.25,
+            stagger: { amount: 0.12 },
+            ease: "power3.inOut",
+            onComplete: () => {
+              g2.set(stairParentRef.current, { display: "none" });
+              g2.set(".stair", { y: "0%" });
+              g2.to(pageRef.current, {
+                opacity: 1,
+                y: 0,
+                duration: 0.2,
+                ease: "power2.out",
+                onComplete: () => {
+                  transitioningRef.current = false;
+                  pendingTlRef.current = null;
+                  transitionHandledRef.current = true;
+                },
+              });
+            },
+          });
         });
       });
     });
@@ -82,11 +93,10 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     pendingTlRef.current = tl;
   }, []);
 
-  // Legacy: navigates first, then plays the stair animation
   const startTransition = useCallback((navigate: () => void) => {
     if (transitioningRef.current) return;
     navigate();
-    triggerStairs();
+    setTimeout(() => { void triggerStairs(); }, 0);
   }, [triggerStairs]);
 
   useLayoutEffect(() => {
@@ -95,7 +105,6 @@ export function Stairs({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // TransitionLink navigations are handled entirely by startTransition
     if (transitioningRef.current) return;
     if (transitionHandledRef.current) {
       transitionHandledRef.current = false;
@@ -104,41 +113,45 @@ export function Stairs({ children }: { children: React.ReactNode }) {
 
     transitioningRef.current = true;
 
-    gsap.killTweensOf(".stair");
-    gsap.set(".stair", { height: "100%", y: "0%" });
-    gsap.set(pageRef.current, { opacity: 0, y: 10 });
+    let killed = false;
 
-    const tl = gsap.timeline();
+    void loadGsap().then((g) => {
+      if (killed) return;
 
-    tl.set(stairParentRef.current, { display: "block" });
-    tl.from(".stair", {
-      height: 0,
-      duration: 0.25,
-      stagger: { amount: 0.12 },
-      ease: "power3.inOut",
-    });
+      g.killTweensOf(".stair");
+      g.set(".stair", { height: "100%", y: "0%" });
+      g.set(pageRef.current, { opacity: 0, y: 10 });
 
-    tl.to(".stair", {
-      y: "100%",
-      duration: 0.25,
-      stagger: { amount: 0.12 },
-      ease: "power3.inOut",
-    });
-    tl.set(stairParentRef.current, { display: "none" });
-    tl.set(".stair", { y: "0%" });
-    tl.to(pageRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.35,
-      ease: "power2.out",
-      onComplete: () => {
-        transitioningRef.current = false;
-        pendingTlRef.current = null;
-      },
+      const tl = g.timeline();
+      tl.set(stairParentRef.current, { display: "block" });
+      tl.from(".stair", {
+        height: 0,
+        duration: 0.25,
+        stagger: { amount: 0.12 },
+        ease: "power3.inOut",
+      });
+      tl.to(".stair", {
+        y: "100%",
+        duration: 0.25,
+        stagger: { amount: 0.12 },
+        ease: "power3.inOut",
+      });
+      tl.set(stairParentRef.current, { display: "none" });
+      tl.set(".stair", { y: "0%" });
+      tl.to(pageRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.35,
+        ease: "power2.out",
+        onComplete: () => {
+          transitioningRef.current = false;
+          pendingTlRef.current = null;
+        },
+      });
     });
 
     return () => {
-      tl.kill();
+      killed = true;
     };
   }, [currentPath]);
 
@@ -146,7 +159,7 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     <StairsContext.Provider value={{ startTransition, triggerStairs }}>
       {/* StairsWatcher uses useSearchParams which requires a Suspense boundary */}
       <Suspense fallback={null}>
-        <StairsWatcher onUrlChange={triggerStairs} />
+        <StairsWatcher onUrlChange={() => void triggerStairs()} />
       </Suspense>
       <div>
         <div

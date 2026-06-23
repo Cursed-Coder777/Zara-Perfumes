@@ -3,6 +3,7 @@
 
 // Import the tRPC React client for querying cart items and mutating quantities
 // Import Link for client-side navigation to auth and product pages
+import Image from "next/image";
 import Link from "next/link";
 
 import { usePageTitle } from "~/lib/use-page-title";
@@ -106,13 +107,14 @@ export default function CartPage() {
                     className="flex gap-6 border-b border-neutral-200 pb-6 dark:border-neutral-800"
                   >
                     {/* Product thumbnail image or placeholder Z logo */}
-                    <div className="h-32 w-24 flex-shrink-0 overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+                    <div className="relative h-32 w-24 flex-shrink-0 overflow-hidden bg-neutral-100 dark:bg-neutral-900">
                       {item.product.images[0] ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={item.product.images[0]}
                           alt={item.product.name}
-                          className="h-full w-full object-cover"
+                          fill
+                          sizes="96px"
+                          className="object-cover"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center">
