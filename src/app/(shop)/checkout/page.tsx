@@ -2,14 +2,15 @@
 "use client";
 
 // Import useState for managing shipping form fields
-import { useState } from "react";
-// Import the tRPC React client for querying cart data and creating a checkout session
-import { api } from "~/trpc/react";
-// Import useSession to verify the user is authenticated before showing checkout
-import { useSession } from "~/lib/use-session";
-import { usePageTitle } from "~/lib/use-page-title";
 // Import Link for client-side navigation to the auth page
 import Link from "next/link";
+import { useState } from "react";
+
+import { usePageTitle } from "~/lib/use-page-title";
+// Import useSession to verify the user is authenticated before showing checkout
+import { useSession } from "~/lib/use-session";
+// Import the tRPC React client for querying cart data and creating a checkout session
+import { api } from "~/trpc/react";
 
 // CheckoutPage renders a shipping form and order summary, then creates a Stripe Checkout session on submit
 export default function CheckoutPage() {

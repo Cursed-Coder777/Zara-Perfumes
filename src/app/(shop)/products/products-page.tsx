@@ -2,9 +2,10 @@
 "use client";
 
 // Import useMemo for filtering products
-import { useMemo } from "react";
 // Import useRouter and useSearchParams for reading URL query parameters and pushing filter updates
 import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+
 // Import the ProductCard component to render each product in the grid
 import { ProductCard } from "~/components/product-card";
 

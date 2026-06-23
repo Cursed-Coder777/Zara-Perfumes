@@ -2,9 +2,10 @@
 "use client";
 
 // Import TransitionLink for animated page transitions
-import { TransitionLink } from "~/components/ui/TransitionLink";
-import Link from "next/link";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+
+import { TransitionLink } from "~/components/ui/TransitionLink";
 
 const Ferrofluid = dynamic(() => import("~/components/ui/Ferrofluid"), { ssr: false });
 

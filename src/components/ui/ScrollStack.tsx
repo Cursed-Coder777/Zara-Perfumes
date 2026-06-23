@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useLayoutEffect, useRef, useCallback } from "react";
-import type { ReactNode } from "react";
 import Lenis from "lenis";
+import type { ReactNode } from "react";
+import React, { useCallback,useLayoutEffect, useRef } from "react";
 
 export interface ScrollStackItemProps {
   itemClassName?: string;

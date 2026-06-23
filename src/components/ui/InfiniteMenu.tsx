@@ -1,8 +1,8 @@
 "use client";
 
 // Import React hooks and gl-matrix for 3D math
-import { type FC, useRef, useState, useEffect } from "react";
 import { mat4, quat, vec2, vec3 } from "gl-matrix";
+import { type FC, useEffect,useRef, useState } from "react";
 
 /**
  * Vertex shader for disc instances.

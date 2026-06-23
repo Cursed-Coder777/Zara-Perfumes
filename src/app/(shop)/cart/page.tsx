@@ -2,12 +2,13 @@
 "use client";
 
 // Import the tRPC React client for querying cart items and mutating quantities
-import { api } from "~/trpc/react";
-// Import useSession to check if the user is authenticated before showing cart
-import { useSession } from "~/lib/use-session";
-import { usePageTitle } from "~/lib/use-page-title";
 // Import Link for client-side navigation to auth and product pages
 import Link from "next/link";
+
+import { usePageTitle } from "~/lib/use-page-title";
+// Import useSession to check if the user is authenticated before showing cart
+import { useSession } from "~/lib/use-session";
+import { api } from "~/trpc/react";
 
 // CartPage displays the user's shopping cart with item list, quantity controls, order summary, and checkout link
 export default function CartPage() {

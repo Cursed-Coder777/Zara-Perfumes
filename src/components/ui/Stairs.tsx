@@ -4,8 +4,8 @@
 // Provides startTransition() via context for use with TransitionLink
 // Also watches for any URL change (pathname + search params) via StairsWatcher so Stairs animation runs on ALL navigations
 import gsap from "gsap";
-import { Suspense, createContext, useCallback, useContext, useLayoutEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { createContext, Suspense, useCallback, useContext, useLayoutEffect, useRef } from "react";
 
 // Context type: provides methods to trigger the stair-animation transition
 // startTransition — navigates then animates (legacy, used by TransitionLink with nav)

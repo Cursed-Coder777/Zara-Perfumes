@@ -6,18 +6,17 @@ import { type Metadata } from "next";
 // Import Geist (sans-serif) and Playfair Display (serif) from next/font/google for the brand's typography palette
 import { Geist, Playfair_Display } from "next/font/google";
 
-// Import the tRPC React provider so all client components can make type-safe API calls
-import { TRPCReactProvider } from "~/trpc/react";
-// Import the ThemeProvider to support light/dark mode toggling throughout the application
-import { ThemeProvider } from "~/lib/theme-provider";
+import { CursorFollower } from "~/components/CursorFollower";
 // Import the Nav component — a fixed top navigation bar with links, cart badge, and auth-aware controls
 import { Nav } from "~/components/nav";
 // Import Stairs for page transition animations
 import { Stairs } from "~/components/ui/Stairs";
-import { CursorFollower } from "~/components/CursorFollower";
-
+// Import the ThemeProvider to support light/dark mode toggling throughout the application
+import { ThemeProvider } from "~/lib/theme-provider";
 // Import getSession for server-side authentication — passes the session to Nav for conditional UI
 import { getSession } from "~/server/better-auth/server";
+// Import the tRPC React provider so all client components can make type-safe API calls
+import { TRPCReactProvider } from "~/trpc/react";
 
 // Define Geist as the primary sans-serif font loaded from Google Fonts with latin subset and a CSS custom property
 const geist = Geist({

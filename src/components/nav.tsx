@@ -2,9 +2,9 @@
 "use client";
 
 // Import the authClient for calling signOut
-import { authClient } from "~/server/better-auth/client";
 // Import TransitionLink for animated page transitions
 import { TransitionLink } from "~/components/ui/TransitionLink";
+import { authClient } from "~/server/better-auth/client";
 // Type definition for a session user object — includes id, name, email, optional image, and optional role
 type SessionUser = {
   id: string;
@@ -16,15 +16,16 @@ type SessionUser = {
 // Type definition for a session — either an object with a user or null
 type Session = { user: SessionUser } | null;
 // Import useRouter for navigation after sign-out and usePathname to highlight the active nav link
-import { useRouter, usePathname } from "next/navigation";
+// Import motion + AnimatePresence for overlay enter/exit animations
+import { AnimatePresence,motion } from "motion/react";
+import { usePathname,useRouter } from "next/navigation";
 // Import useEffect for scroll listener, mobile menu close on route change, and cart count sync; useState for mobile menu and scroll state
 import { useEffect, useMemo, useState } from "react";
-// Import the tRPC React client for fetching cart items to display the badge count
-import { api } from "~/trpc/react";
+
 // Import FlowingMenu for the full-screen hamburger overlay
 import FlowingMenu from "~/components/FlowingMenu";
-// Import motion + AnimatePresence for overlay enter/exit animations
-import { motion, AnimatePresence } from "motion/react";
+// Import the tRPC React client for fetching cart items to display the badge count
+import { api } from "~/trpc/react";
 
 const menuItems = [
   { link: "/", text: "Home", image: "/images/card-2.jpg" },

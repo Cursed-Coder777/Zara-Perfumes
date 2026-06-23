@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-// Import tRPC server helpers for server-side data fetching and hydration
-import { api, HydrateClient } from "~/trpc/server";
-// Import getSession for server-side authentication check — redirects unauthenticated users
-import { getSession } from "~/server/better-auth/server";
 // Import redirect for sending unauthenticated users to the sign-in page
 import { redirect } from "next/navigation";
+
+// Import getSession for server-side authentication check — redirects unauthenticated users
+import { getSession } from "~/server/better-auth/server";
+// Import tRPC server helpers for server-side data fetching and hydration
+import { api, HydrateClient } from "~/trpc/server";
+
 // Import the client-side OrdersList component to render the order history
 import { OrdersList } from "./orders-list";
 

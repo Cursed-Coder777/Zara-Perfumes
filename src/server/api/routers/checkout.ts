@@ -1,15 +1,16 @@
 // Import Zod for validating shipping-address inputs
-import { z } from "zod";
 // Import tRPC's error class to throw structured HTTP-like errors (e.g. BAD_REQUEST)
 import { TRPCError } from "@trpc/server";
+// Import the Drizzle eq helper for building WHERE clauses
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+
+// Import the Stripe lazy initializer (avoids crash during build when env vars aren't available)
+import { getStripe } from "~/lib/stripe";
 // Import tRPC utilities: router factory and protected procedure (user must be logged in)
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 // Import Drizzle schemas for the cartItem, order, and orderItem tables
 import { cartItem, order, orderItem } from "~/server/db/schema";
-// Import the Drizzle eq helper for building WHERE clauses
-import { eq } from "drizzle-orm";
-// Import the Stripe lazy initializer (avoids crash during build when env vars aren't available)
-import { getStripe } from "~/lib/stripe";
 
 // Create and export the tRPC router for the checkout flow — creates an order then a Stripe session
 export const checkoutRouter = createTRPCRouter({

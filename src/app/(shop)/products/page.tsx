@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+
 // Import tRPC server helpers (api caller + HydrateClient) for server-side data fetching and hydration
 import { api, HydrateClient } from "~/trpc/server";
+
 // Import the client-side ProductsPage component to render the interactive product grid and filters
 import { ProductsPage } from "./products-page";
 

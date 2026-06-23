@@ -5,6 +5,7 @@ import postgres from "postgres";
 
 // Import validated environment variables (DATABASE_URL for the connection string)
 import { env } from "~/env";
+
 // Import the entire schema object so Drizzle knows all tables, relations, and types
 import * as schema from "./schema";
 

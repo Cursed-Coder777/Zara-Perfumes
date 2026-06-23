@@ -3,6 +3,7 @@
 
 // Import the useQuery hook from TanStack React Query for caching and re-fetching the session
 import { useQuery } from "@tanstack/react-query";
+
 // Import the browser-side better-auth client to make session fetch requests from the client
 import { authClient } from "~/server/better-auth/client";
 

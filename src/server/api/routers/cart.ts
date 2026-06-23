@@ -1,7 +1,8 @@
 // Import Zod for validating inputs to cart mutations (productId, size, quantity)
-import { z } from "zod";
 // Import Drizzle helpers for building equality and compound AND conditions in SQL queries
-import { eq, and } from "drizzle-orm";
+import { and,eq } from "drizzle-orm";
+import { z } from "zod";
+
 // Import tRPC utilities: router factory and protected procedure (requires authentication)
 import {
   createTRPCRouter,

@@ -1,15 +1,16 @@
 // Import NextRequest and NextResponse for handling HTTP requests and responses in the App Router
+// Import eq from Drizzle ORM for constructing the WHERE clause
+import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
-// Import the configured Stripe instance for verifying webhook signatures
-import { getStripe } from "~/lib/stripe";
+
 // Import the validated environment variables to access the webhook secret
 import { env } from "~/env";
+// Import the configured Stripe instance for verifying webhook signatures
+import { getStripe } from "~/lib/stripe";
 // Import the database instance for updating order status after successful payment
 import { db } from "~/server/db";
 // Import the order table schema for running update queries
 import { order } from "~/server/db/schema";
-// Import eq from Drizzle ORM for constructing the WHERE clause
-import { eq } from "drizzle-orm";
 
 // POST handler for Stripe webhook events — receives JSON payload, verifies signature, and processes events (e.g., checkout.session.completed)
 export async function POST(req: NextRequest) {

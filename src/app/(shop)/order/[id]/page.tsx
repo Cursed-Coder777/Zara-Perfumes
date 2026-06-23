@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-// Import tRPC server helpers for server-side data fetching and hydration
-import { api, HydrateClient } from "~/trpc/server";
-// Import the lazy better-auth initializer for getting the session via headers
-import { getAuth } from "~/server/better-auth/config";
 // Import the headers function from next/headers to read the request headers for session retrieval
 import { headers } from "next/headers";
 // Import notFound to return a 404 when the order is not found or user is unauthorized
 import { notFound } from "next/navigation";
+
+// Import the lazy better-auth initializer for getting the session via headers
+import { getAuth } from "~/server/better-auth/config";
+// Import tRPC server helpers for server-side data fetching and hydration
+import { api, HydrateClient } from "~/trpc/server";
+
 // Import the client-side OrderDetail component to render the order details
 import { OrderDetail } from "./order-detail";
 

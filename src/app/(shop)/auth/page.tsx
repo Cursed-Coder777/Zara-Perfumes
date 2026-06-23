@@ -1,9 +1,10 @@
 "use client";
 
-import { authClient } from "~/server/better-auth/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 import { usePageTitle } from "~/lib/use-page-title";
+import { authClient } from "~/server/better-auth/client";
 
 export default function AuthPage() {
   const router = useRouter();

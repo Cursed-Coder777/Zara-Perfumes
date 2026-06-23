@@ -9,6 +9,8 @@
 
 // Import the tRPC server initialisation utilities and standard error type
 import { initTRPC, TRPCError } from "@trpc/server";
+// Import the equality operator from Drizzle-ORM for constructing WHERE clauses
+import { eq } from "drizzle-orm";
 // Import SuperJSON as the serialisation transformer (supports Date, Map, Set, BigInt, etc.)
 import superjson from "superjson";
 // Import ZodError for structured validation error formatting on the client side
@@ -20,8 +22,6 @@ import { getAuth } from "~/server/better-auth";
 import { db } from "~/server/db";
 // Import the user table schema for role lookups during protected procedure validation
 import { user } from "~/server/db/schema";
-// Import the equality operator from Drizzle-ORM for constructing WHERE clauses
-import { eq } from "drizzle-orm";
 
 /**
  * 1. CONTEXT

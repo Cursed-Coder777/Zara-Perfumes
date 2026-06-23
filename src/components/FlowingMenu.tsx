@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
+import React, { useEffect, useRef, useState } from "react";
+
 import { TransitionLink } from "~/components/ui/TransitionLink";
 
 interface MenuItemData {

@@ -1,8 +1,8 @@
 "use client";
 
 // Framer Motion for drag gesture, motion values, and spring animations
-import { motion, useMotionValue, useTransform, type PanInfo } from "motion/react";
-import { useState, useEffect } from "react";
+import { motion, type PanInfo,useMotionValue, useTransform } from "motion/react";
+import { useEffect,useState } from "react";
 
 /** Props for the CardRotate sub-component that handles the drag-to-send-back behaviour. */
 interface CardRotateProps {

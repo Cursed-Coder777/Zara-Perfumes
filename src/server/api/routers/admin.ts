@@ -1,11 +1,12 @@
 // Import Zod for runtime validation of procedure input schemas
-import { z } from "zod";
 // Import Drizzle ORM helpers for building SQL WHERE equality and sort clauses
-import { eq, desc } from "drizzle-orm";
+import { desc,eq } from "drizzle-orm";
+import { z } from "zod";
+
 // Import tRPC utilities: router factory and public (unauthenticated) procedure builder
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // Import Drizzle schema objects for the product, category, and order database tables
-import { product, category, order } from "~/server/db/schema";
+import { category, order,product } from "~/server/db/schema";
 
 // Create and export the tRPC router that groups all admin-only endpoints for
 // managing products, categories, and orders

@@ -4,8 +4,8 @@
 
 // This component was manually installed from https://reactbits.dev/ts/tweakers/Ferrofluid
 
+import { Mesh, Program, Renderer, Triangle } from "ogl";
 import React, { useEffect, useRef } from "react";
-import { Renderer, Program, Mesh, Triangle } from "ogl";
 
 export interface FerrofluidProps {
   /** Additional CSS class names */

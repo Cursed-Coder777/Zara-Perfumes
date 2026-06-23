@@ -1,7 +1,7 @@
-import { api, HydrateClient } from "~/trpc/server";
-import { ProductCard } from "~/components/product-card";
 import HeroSection from "~/components/hero-section";
+import { ProductCard } from "~/components/product-card";
 import { TransitionLink } from "~/components/ui/TransitionLink";
+import { api, HydrateClient } from "~/trpc/server";
 
 // Home is the main landing page — an async server component that fetches featured products, categories, and latest products, then renders marketing sections
 export default async function Home() {

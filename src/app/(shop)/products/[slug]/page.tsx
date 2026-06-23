@@ -1,17 +1,13 @@
 // Mark this component as a Client Component for interactivity — size selection, add-to-cart mutation, and session-aware UI
 "use client";
 
-// Import useState for managing the selected size state
-import { useState } from "react";
-// Import useParams to read the product slug from the URL and useRouter for navigation after add-to-cart
-import { useParams, useRouter } from "next/navigation";
-// Import the tRPC React client for fetching product details by slug and adding items to cart
-import { api } from "~/trpc/react";
-// Import useSession to check if the user is authenticated before showing the add-to-cart button
-import { useSession } from "~/lib/use-session";
-// Import Link for client-side navigation to the auth page and products listing
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+
 import { usePageTitle } from "~/lib/use-page-title";
+import { useSession } from "~/lib/use-session";
+import { api } from "~/trpc/react";
 
 // ProductDetailPage is the product detail view — fetches a single product by URL slug, shows image/info/sizes, and allows adding to cart
 export default function ProductDetailPage() {

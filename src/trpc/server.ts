@@ -9,9 +9,10 @@ import { headers } from "next/headers";
 import { cache } from "react";
 
 // Import createCaller (to create a server-side tRPC caller) and the AppRouter type
-import { createCaller, type AppRouter } from "~/server/api/root";
+import { type AppRouter,createCaller } from "~/server/api/root";
 // Import createTRPCContext to build the request context (headers, session, etc.) for each tRPC call
 import { createTRPCContext } from "~/server/api/trpc";
+
 // Import the createQueryClient factory for SSR-compatible query client creation
 import { createQueryClient } from "./query-client";
 

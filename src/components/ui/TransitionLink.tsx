@@ -2,8 +2,9 @@
 
 // Client component that intercepts <a> clicks to trigger a GSAP stair transition before navigating
 import { useRouter } from "next/navigation";
+import type { MouseEvent,ReactNode } from "react";
+
 import { useStairs } from "./Stairs";
-import type { ReactNode, MouseEvent } from "react";
 
 // TransitionLink renders as <a> but intercepts clicks to run the stair transition before navigating
 // Prefetches the destination on hover for instant navigation after the transition

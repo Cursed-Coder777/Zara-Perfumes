@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "~/trpc/react";
+
 import { usePageTitle } from "~/lib/use-page-title";
+import { api } from "~/trpc/react";
 
 // Hard-coded password gate — in production this should be replaced with proper
 // server-side auth (e.g. checking the authenticated user's role === "admin")

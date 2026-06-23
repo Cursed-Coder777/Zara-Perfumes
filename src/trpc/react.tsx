@@ -2,7 +2,7 @@
 "use client";
 
 // Import QueryClientProvider and the QueryClient type from TanStack React Query for managing server-state caching
-import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
+import { type QueryClient,QueryClientProvider } from "@tanstack/react-query";
 // Import httpBatchStreamLink (streaming batch HTTP link) and loggerLink (dev logging) from tRPC client
 import { httpBatchStreamLink, loggerLink } from "@trpc/client";
 // Import createTRPCReact to generate a type-safe tRPC React hooks object
@@ -16,6 +16,7 @@ import SuperJSON from "superjson";
 
 // Import the AppRouter type for full end-to-end type safety
 import { type AppRouter } from "~/server/api/root";
+
 // Import the createQueryClient factory that produces a properly configured QueryClient
 import { createQueryClient } from "./query-client";
 
