@@ -71,6 +71,10 @@ async function seed() {
       categoryId: oriental.id,
       stock: 50,
       isFeatured: true,
+      images: [
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Azure Bloom",
@@ -87,6 +91,10 @@ async function seed() {
       categoryId: floral.id,
       stock: 35,
       isFeatured: true,
+      images: [
+        "https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Santal Royal",
@@ -103,6 +111,10 @@ async function seed() {
       categoryId: woody.id,
       stock: 25,
       isFeatured: true,
+      images: [
+        "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Citrus Mist",
@@ -119,6 +131,10 @@ async function seed() {
       categoryId: fresh.id,
       stock: 60,
       isFeatured: true,
+      images: [
+        "https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Velvet Oud",
@@ -135,6 +151,10 @@ async function seed() {
       categoryId: oriental.id,
       stock: 15,
       isFeatured: false,
+      images: [
+        "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Morning Dew",
@@ -151,6 +171,10 @@ async function seed() {
       categoryId: floral.id,
       stock: 40,
       isFeatured: false,
+      images: [
+        "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Ember & Smoke",
@@ -167,6 +191,10 @@ async function seed() {
       categoryId: woody.id,
       stock: 20,
       isFeatured: false,
+      images: [
+        "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&h=800&fit=crop",
+      ],
     },
     {
       name: "Ocean Whisper",
@@ -183,6 +211,10 @@ async function seed() {
       categoryId: fresh.id,
       stock: 45,
       isFeatured: false,
+      images: [
+        "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&h=800&fit=crop",
+        "https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=800&h=800&fit=crop",
+      ],
     },
   ];
 

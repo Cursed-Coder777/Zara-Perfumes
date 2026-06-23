@@ -1,13 +1,12 @@
 "use client";
 
-// Client component that intercepts <a> clicks to trigger a GSAP stair transition before navigating
+"use client";
+
 import { useRouter } from "next/navigation";
 import type { MouseEvent,ReactNode } from "react";
 
 import { useStairs } from "./Stairs";
 
-// TransitionLink renders as <a> but intercepts clicks to run the stair transition before navigating
-// Prefetches the destination on hover for instant navigation after the transition
 export function TransitionLink({
   href,
   children,
@@ -26,15 +25,13 @@ export function TransitionLink({
   onMouseLeave?: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const router = useRouter();
-  const { triggerStairs } = useStairs();
+  const { coverPage } = useStairs();
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     onClick?.(e);
-    // Navigate FIRST so the new page starts loading immediately
+    void coverPage();
     router.push(href);
-    // Then trigger the stair animation — covers the current page while the new one loads
-    triggerStairs();
   };
 
   const handleMouseEnter = (e: MouseEvent<HTMLAnchorElement>) => {

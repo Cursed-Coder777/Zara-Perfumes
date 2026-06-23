@@ -15,16 +15,17 @@ async function loadGsap() {
   return _gsap;
 }
 
-// Context type: provides methods to trigger the stair-animation transition
-// startTransition — navigates then animates (legacy, used by TransitionLink with nav)
-// triggerStairs — animates only, for when navigation is handled separately
+// Context exposes page-transition controls for the stair animation overlay
+// coverPage — panels slide down immediately (link click), hides current page
+// revealPage — panels slide up when new route is ready (called by StairsWatcher)
+// triggerStairs — full cover+reveal cycle for browser back/forward navigation
 type StairsContextType = {
-  startTransition: (navigate: () => void) => void;
+  coverPage: () => Promise<void>;
   triggerStairs: () => Promise<void>;
 };
 
 const StairsContext = createContext<StairsContextType>({
-  startTransition: () => undefined,
+  coverPage: async () => undefined,
   triggerStairs: async () => undefined,
 });
 
@@ -45,6 +46,9 @@ export function Stairs({ children }: { children: React.ReactNode }) {
   const pendingTlRef = useRef<any>(null);
   const transitionHandledRef = useRef(false);
 
+  const isCoveredRef = useRef(false);
+
+  // Full cover + reveal — used for browser back/forward (no TransitionLink involvement)
   const triggerStairs = useCallback(async () => {
     if (transitioningRef.current) return;
     transitioningRef.current = true;
@@ -93,11 +97,56 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     pendingTlRef.current = tl;
   }, []);
 
-  const startTransition = useCallback((navigate: () => void) => {
-    if (transitioningRef.current) return;
-    navigate();
-    setTimeout(() => { void triggerStairs(); }, 0);
-  }, [triggerStairs]);
+  // Cover only — panels slide down immediately on link click
+  const coverPage = useCallback(async () => {
+    if (isCoveredRef.current) return;
+    transitioningRef.current = true;
+    transitionHandledRef.current = false;
+
+    const g = await loadGsap();
+    g.set(stairParentRef.current, { display: "block" });
+    g.set(".stair", { height: "0%", y: "0%" });
+    g.set(pageRef.current, { opacity: 0, y: 10 });
+
+    g.to(".stair", {
+      height: "100%",
+      duration: 0.25,
+      stagger: { amount: 0.12 },
+      ease: "power3.inOut",
+      onComplete: () => {
+        isCoveredRef.current = true;
+      },
+    });
+  }, []);
+
+  // Reveal only — panels slide up when new page content is ready
+  const revealPage = useCallback(async () => {
+    if (!isCoveredRef.current) return;
+
+    const g = await loadGsap();
+    g.to(".stair", {
+      y: "100%",
+      duration: 0.25,
+      stagger: { amount: 0.12 },
+      ease: "power3.inOut",
+      onComplete: () => {
+        g.set(stairParentRef.current, { display: "none" });
+        g.set(".stair", { y: "0%" });
+        g.to(pageRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.2,
+          ease: "power2.out",
+          onComplete: () => {
+            transitioningRef.current = false;
+            pendingTlRef.current = null;
+            isCoveredRef.current = false;
+            transitionHandledRef.current = true;
+          },
+        });
+      },
+    });
+  }, []);
 
   useLayoutEffect(() => {
     if (initialRef.current) {
@@ -105,6 +154,7 @@ export function Stairs({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    if (isCoveredRef.current) return; // Already covered by TransitionLink — reveal handles it
     if (transitioningRef.current) return;
     if (transitionHandledRef.current) {
       transitionHandledRef.current = false;
@@ -156,10 +206,18 @@ export function Stairs({ children }: { children: React.ReactNode }) {
   }, [currentPath]);
 
   return (
-    <StairsContext.Provider value={{ startTransition, triggerStairs }}>
+    <StairsContext.Provider value={{ coverPage, triggerStairs }}>
       {/* StairsWatcher uses useSearchParams which requires a Suspense boundary */}
       <Suspense fallback={null}>
-        <StairsWatcher onUrlChange={() => void triggerStairs()} />
+        <StairsWatcher
+          onUrlChange={() => {
+            if (isCoveredRef.current) {
+              void revealPage();
+            } else {
+              void triggerStairs();
+            }
+          }}
+        />
       </Suspense>
       <div>
         <div
