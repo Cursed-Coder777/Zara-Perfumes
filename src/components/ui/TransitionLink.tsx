@@ -25,12 +25,15 @@ export function TransitionLink({
   onMouseLeave?: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const router = useRouter();
-  const { startTransition } = useStairs();
+  const { triggerStairs } = useStairs();
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     onClick?.(e);
-    startTransition(() => router.push(href));
+    // Navigate FIRST so the new page starts loading immediately
+    router.push(href);
+    // Then trigger the stair animation — covers the current page while the new one loads
+    triggerStairs();
   };
 
   const handleMouseEnter = (e: MouseEvent<HTMLAnchorElement>) => {

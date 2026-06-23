@@ -2,23 +2,22 @@
 
 // GSAP-based page transition overlay: animates 5 vertical "stair" panels on route change
 // Provides startTransition() via context for use with TransitionLink
+// Also watches for any URL change (pathname + search params) via StairsWatcher so Stairs animation runs on ALL navigations
 import gsap from "gsap";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useRef,
-} from "react";
-import { usePathname } from "next/navigation";
+import { Suspense, createContext, useCallback, useContext, useLayoutEffect, useRef } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
-// Context type: provides a method to trigger the stair-animation transition before navigating
+// Context type: provides methods to trigger the stair-animation transition
+// startTransition — navigates then animates (legacy, used by TransitionLink with nav)
+// triggerStairs — animates only, for when navigation is handled separately
 type StairsContextType = {
   startTransition: (navigate: () => void) => void;
+  triggerStairs: () => void;
 };
 
 const StairsContext = createContext<StairsContextType>({
   startTransition: () => undefined,
+  triggerStairs: () => undefined,
 });
 
 export function useStairs() {
@@ -36,7 +35,8 @@ export function Stairs({ children }: { children: React.ReactNode }) {
   const pendingTlRef = useRef<gsap.core.Timeline | null>(null);
   const transitionHandledRef = useRef(false);
 
-  const startTransition = useCallback((navigate: () => void) => {
+  // Plays the stair animation (cover then reveal) without navigation
+  const triggerStairs = useCallback(() => {
     if (transitioningRef.current) return;
     transitioningRef.current = true;
     transitionHandledRef.current = false;
@@ -44,9 +44,6 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     gsap.set(stairParentRef.current, { display: "block" });
     gsap.set(".stair", { height: "0%", y: "0%" });
     gsap.set(pageRef.current, { opacity: 0, y: 10 });
-
-    // Start navigation immediately — overlaps with cover animation
-    navigate();
 
     const tl = gsap.timeline();
     tl.to(".stair", {
@@ -85,6 +82,13 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     pendingTlRef.current = tl;
   }, []);
 
+  // Legacy: navigates first, then plays the stair animation
+  const startTransition = useCallback((navigate: () => void) => {
+    if (transitioningRef.current) return;
+    navigate();
+    triggerStairs();
+  }, [triggerStairs]);
+
   useLayoutEffect(() => {
     if (initialRef.current) {
       initialRef.current = false;
@@ -97,6 +101,8 @@ export function Stairs({ children }: { children: React.ReactNode }) {
       transitionHandledRef.current = false;
       return;
     }
+
+    transitioningRef.current = true;
 
     gsap.killTweensOf(".stair");
     gsap.set(".stair", { height: "100%", y: "0%" });
@@ -137,22 +143,66 @@ export function Stairs({ children }: { children: React.ReactNode }) {
   }, [currentPath]);
 
   return (
-    <StairsContext.Provider value={{ startTransition }}>
+    <StairsContext.Provider value={{ startTransition, triggerStairs }}>
+      {/* StairsWatcher uses useSearchParams which requires a Suspense boundary */}
+      <Suspense fallback={null}>
+        <StairsWatcher onUrlChange={triggerStairs} />
+      </Suspense>
       <div>
         <div
           ref={stairParentRef}
-          className="fixed top-0 z-[100] hidden h-screen w-full pointer-events-none"
+          className="pointer-events-none fixed top-0 z-[100] hidden h-screen w-full"
         >
           <div className="flex h-full w-full" style={{ gap: 0 }}>
-            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
-            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
-            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
-            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
-            <div className="stair h-full w-1/5 bg-white" style={{ outline: "1px solid #fff", outlineOffset: "-1px" }} />
+            <div
+              className="stair h-full w-1/5 bg-white"
+              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
+            />
+            <div
+              className="stair h-full w-1/5 bg-white"
+              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
+            />
+            <div
+              className="stair h-full w-1/5 bg-white"
+              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
+            />
+            <div
+              className="stair h-full w-1/5 bg-white"
+              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
+            />
+            <div
+              className="stair h-full w-1/5 bg-white"
+              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
+            />
           </div>
         </div>
         <div ref={pageRef}>{children}</div>
       </div>
     </StairsContext.Provider>
   );
+}
+
+// Watches for ANY URL change (pathname + search params) and triggers the stair animation
+// Handles back/forward browser nav and programmatic router.push calls with search params
+function StairsWatcher({ onUrlChange }: { onUrlChange: () => void }) {
+  const currentPath = usePathname();
+  const searchParams = useSearchParams();
+  const urlKey = currentPath + "?" + searchParams.toString();
+  const prevUrlKeyRef = useRef(urlKey);
+  const initialRef = useRef(true);
+
+  useLayoutEffect(() => {
+    if (initialRef.current) {
+      initialRef.current = false;
+      prevUrlKeyRef.current = urlKey;
+      return;
+    }
+    if (prevUrlKeyRef.current === urlKey) return;
+    prevUrlKeyRef.current = urlKey;
+
+    // Trigger the stair animation — cover over current page, then reveal new content
+    onUrlChange();
+  }, [urlKey, onUrlChange]);
+
+  return null;
 }

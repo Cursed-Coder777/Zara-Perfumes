@@ -11,6 +11,7 @@ import { api } from "~/trpc/react";
 import { useSession } from "~/lib/use-session";
 // Import Link for client-side navigation to the auth page and products listing
 import Link from "next/link";
+import { usePageTitle } from "~/lib/use-page-title";
 
 // ProductDetailPage is the product detail view — fetches a single product by URL slug, shows image/info/sizes, and allows adding to cart
 export default function ProductDetailPage() {
@@ -31,11 +32,32 @@ export default function ProductDetailPage() {
     onSuccess: () => router.refresh(),
   });
 
-  // Show a centered loading spinner while the product query is in flight
+  usePageTitle(product?.name ?? "Product");
+
   if (isLoading) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
-        <div className="text-sm uppercase tracking-widest text-neutral-400">Loading...</div>
+      <div className="min-h-screen pt-32 pb-16 md:pb-24">
+        <div className="mx-auto max-w-7xl px-6 md:px-12">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-24">
+            <div className="aspect-[3/4] animate-pulse bg-neutral-200 dark:bg-neutral-800" />
+            <div className="flex flex-col justify-center gap-6">
+              <div className="h-3 w-24 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+              <div className="h-10 w-3/4 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+              <div className="space-y-2">
+                <div className="h-3 w-full animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+                <div className="h-3 w-5/6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+                <div className="h-3 w-4/6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <div className="h-10 w-28 animate-pulse rounded border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-800" />
+                <div className="h-10 w-28 animate-pulse rounded border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-800" />
+                <div className="h-10 w-28 animate-pulse rounded border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-800" />
+              </div>
+              <div className="h-8 w-32 animate-pulse rounded bg-neutral-200 dark:bg-neutral-800" />
+              <div className="h-12 w-full animate-pulse rounded bg-neutral-200 dark:bg-neutral-800 md:w-64" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -43,12 +65,15 @@ export default function ProductDetailPage() {
   // If the product was not found (null/undefined), show a "not found" state with a link back to the collection
   if (!product) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center pt-32">
         <div className="text-center">
-          <p className="text-sm uppercase tracking-widest text-neutral-400 mb-4">
+          <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
             Product not found
           </p>
-          <Link href="/products" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 border border-neutral-950 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950 text-xs">
+          <Link
+            href="/products"
+            className="inline-flex items-center justify-center border border-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-950 uppercase transition-all duration-300 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950"
+          >
             Back to Collection
           </Link>
         </div>
@@ -65,12 +90,12 @@ export default function ProductDetailPage() {
 
   // Render the full product detail page with image, info, size selector, and add-to-cart button
   return (
-    <div className="pt-32 pb-16 md:pb-24 min-h-screen">
+    <div className="min-h-screen pt-32 pb-16 md:pb-24">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         {/* Two-column layout: product image on the left, details on the right */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-24">
           {/* Product image placeholder or actual image with a 3:4 aspect ratio */}
-          <div className="aspect-[3/4] bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
+          <div className="aspect-[3/4] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
             {product.images[0] ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -90,40 +115,40 @@ export default function ProductDetailPage() {
           {/* Product details section — category name, product name, scent notes, description, size options, price, and add-to-cart */}
           <div className="flex flex-col justify-center">
             {/* Category label above the product name */}
-            <p className="text-xs uppercase tracking-[0.3em] mb-3 text-neutral-400">
+            <p className="mb-3 text-xs tracking-[0.3em] text-neutral-400 uppercase">
               {product.category?.name ?? "Fragrance"}
             </p>
             {/* Product name in the serif font */}
-            <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight mb-4">{product.name}</h1>
+            <h1 className="mb-4 font-serif text-3xl leading-tight tracking-tight md:text-5xl">
+              {product.name}
+            </h1>
 
             {/* Scent notes (if available) — displayed as muted descriptive text */}
             {product.scentNotes && (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-8">
+              <p className="mb-8 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
                 {product.scentNotes}
               </p>
             )}
 
             {/* Full description (if available) — displayed below scent notes */}
             {product.description && (
-              <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed mb-8">
+              <p className="mb-8 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
                 {product.description}
               </p>
             )}
 
             {/* Size selector — renders a button for each available size showing ml and price */}
             <div className="mb-8">
-              <p className="text-xs uppercase tracking-widest mb-3 text-neutral-500">
-                Size
-              </p>
+              <p className="mb-3 text-xs tracking-widest text-neutral-500 uppercase">Size</p>
               <div className="flex flex-wrap gap-3">
                 {product.sizes.map((size) => (
                   <button
                     key={size.ml}
                     onClick={() => setSelectedSize(size.ml)}
-                    className={`px-5 py-3 text-xs uppercase tracking-widest border transition-all duration-200 ${
+                    className={`border px-5 py-3 text-xs tracking-widest uppercase transition-all duration-200 ${
                       defaultSize === size.ml
-                        ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950 border-neutral-950 dark:border-neutral-50"
-                        : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-950 dark:hover:border-neutral-50"
+                        ? "border-neutral-950 bg-neutral-950 text-neutral-50 dark:border-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
+                        : "border-neutral-200 hover:border-neutral-950 dark:border-neutral-800 dark:hover:border-neutral-50"
                     }`}
                   >
                     {size.ml}ml — ${(size.price / 100).toFixed(2)}
@@ -133,11 +158,9 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Price display and stock indicator */}
-            <div className="flex items-center gap-4 mb-8">
-              <span className="font-serif text-3xl">
-                ${(displayPrice / 100).toFixed(2)}
-              </span>
-              <span className="text-xs text-neutral-400 uppercase tracking-wider">
+            <div className="mb-8 flex items-center gap-4">
+              <span className="font-serif text-3xl">${(displayPrice / 100).toFixed(2)}</span>
+              <span className="text-xs tracking-wider text-neutral-400 uppercase">
                 {product.stock > 0 ? "In Stock" : "Out of Stock"}
               </span>
             </div>
@@ -153,12 +176,15 @@ export default function ProductDetailPage() {
                   })
                 }
                 disabled={addToCart.isPending || product.stock === 0}
-                className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 w-full md:w-auto"
+                className="inline-flex w-full items-center justify-center bg-neutral-950 px-8 py-3 text-sm font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 md:w-auto dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
               >
                 {addToCart.isPending ? "Adding..." : "Add to Cart"}
               </button>
             ) : (
-              <Link href="/auth" className="inline-flex items-center justify-center px-8 py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 bg-neutral-950 text-neutral-50 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200 w-full md:w-auto text-center">
+              <Link
+                href="/auth"
+                className="inline-flex w-full items-center justify-center bg-neutral-950 px-8 py-3 text-center text-sm font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 md:w-auto dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
+              >
                 Sign In to Purchase
               </Link>
             )}
