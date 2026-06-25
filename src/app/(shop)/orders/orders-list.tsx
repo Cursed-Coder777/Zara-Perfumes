@@ -1,8 +1,8 @@
 // Mark this component as a Client Component so it can use client-side routing via Link
 "use client";
 
-// Import Link for client-side navigation to individual order detail pages
-import Link from "next/link";
+// Import TransitionLink for animated page transitions
+import { TransitionLink } from "~/components/ui/TransitionLink";
 
 // Type definition for an order item — each item in an order has a product name, price, size, and quantity
 type OrderItem = {
@@ -48,18 +48,18 @@ export function OrdersList({ orders }: { orders: Order[] }) {
         {orders.length === 0 ? (
           <div className="py-24 text-center">
             <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">No orders yet</p>
-            <Link
+            <TransitionLink
               href="/products"
               className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
             >
               Start Shopping
-            </Link>
+            </TransitionLink>
           </div>
         ) : (
           // List of order cards — each links to the order detail page
           <div className="space-y-6">
             {orders.map((order) => (
-              <Link
+              <TransitionLink
                 key={order.id}
                 href={`/order/${order.id}`}
                 className="block border border-neutral-200 p-6 transition-colors hover:border-neutral-950 dark:border-neutral-800 dark:hover:border-neutral-50"
@@ -91,7 +91,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
                 <div className="mt-2 text-sm font-medium">
                   ${(order.totalAmount / 100).toFixed(2)}
                 </div>
-              </Link>
+              </TransitionLink>
             ))}
           </div>
         )}

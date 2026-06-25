@@ -1,8 +1,8 @@
 // Mark this component as a Client Component so it can use client-side routing via Link
 "use client";
 
-// Import Link for client-side navigation back to the products page
-import Link from "next/link";
+// Import TransitionLink for animated page transitions
+import { TransitionLink } from "~/components/ui/TransitionLink";
 
 // Type definition for an order item — each item has an id, product name, optional image, price, size, and quantity
 type OrderItem = {
@@ -36,12 +36,12 @@ export function OrderDetail({ order }: { order: OrderData }) {
       <div className="flex min-h-screen items-center justify-center pt-32">
         <div className="text-center">
           <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">Order not found</p>
-          <Link
+          <TransitionLink
             href="/products"
             className="inline-flex items-center justify-center border border-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-950 uppercase transition-all duration-300 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950"
           >
             Continue Shopping
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     );
@@ -121,12 +121,12 @@ export function OrderDetail({ order }: { order: OrderData }) {
 
         {/* "Continue Shopping" button centered at the bottom of the page */}
         <div className="text-center">
-          <Link
+          <TransitionLink
             href="/products"
             className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             Continue Shopping
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     </div>

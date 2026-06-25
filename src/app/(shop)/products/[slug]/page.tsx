@@ -1,10 +1,10 @@
 // Mark this component as a Client Component for interactivity — size selection, add-to-cart mutation, and session-aware UI
 "use client";
 
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { TransitionLink } from "~/components/ui/TransitionLink";
 import { usePageTitle } from "~/lib/use-page-title";
 import { useSession } from "~/lib/use-session";
 import { api } from "~/trpc/react";
@@ -66,12 +66,12 @@ export default function ProductDetailPage() {
           <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
             Product not found
           </p>
-          <Link
+          <TransitionLink
             href="/products"
             className="inline-flex items-center justify-center border border-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-950 uppercase transition-all duration-300 hover:bg-neutral-950 hover:text-neutral-50 dark:border-neutral-50 dark:text-neutral-50 dark:hover:bg-neutral-50 dark:hover:text-neutral-950"
           >
             Back to Collection
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     );
@@ -177,12 +177,12 @@ export default function ProductDetailPage() {
                 {addToCart.isPending ? "Adding..." : "Add to Cart"}
               </button>
             ) : (
-              <Link
+              <TransitionLink
                 href="/auth"
                 className="inline-flex w-full items-center justify-center bg-neutral-950 px-8 py-3 text-center text-sm font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 md:w-auto dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
               >
                 Sign In to Purchase
-              </Link>
+              </TransitionLink>
             )}
           </div>
         </div>

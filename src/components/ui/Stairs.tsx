@@ -1,7 +1,14 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { createContext, Suspense, useCallback, useContext, useLayoutEffect, useRef } from "react";
+import {
+  createContext,
+  Suspense,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+} from "react";
 
 // GSAP is dynamically imported to keep ~40kB off the critical bundle.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,15 +24,18 @@ async function loadGsap() {
 
 // Context exposes page-transition controls for the stair animation overlay
 // coverPage — panels slide down immediately (link click), hides current page
-// revealPage — panels slide up when new route is ready (called by StairsWatcher)
+//   returns a Promise that resolves once the cover animation fully completes
+// revealPage — panels slide up when new route is ready
 // triggerStairs — full cover+reveal cycle for browser back/forward navigation
 type StairsContextType = {
   coverPage: () => Promise<void>;
+  revealPage: () => Promise<void>;
   triggerStairs: () => Promise<void>;
 };
 
 const StairsContext = createContext<StairsContextType>({
   coverPage: async () => undefined,
+  revealPage: async () => undefined,
   triggerStairs: async () => undefined,
 });
 
@@ -47,6 +57,17 @@ export function Stairs({ children }: { children: React.ReactNode }) {
   const transitionHandledRef = useRef(false);
 
   const isCoveredRef = useRef(false);
+  const skipUrlChangeRef = useRef(false);
+
+  // ── helpers ──────────────────────────────────────────────────────────────
+
+  const finishTransition = useCallback(() => {
+    isCoveredRef.current = false;
+    transitionHandledRef.current = true;
+    skipUrlChangeRef.current = true;
+  }, []);
+
+  // ── exposed methods ──────────────────────────────────────────────────────
 
   // Full cover + reveal — used for browser back/forward (no TransitionLink involvement)
   const triggerStairs = useCallback(async () => {
@@ -57,47 +78,38 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     const g = await loadGsap();
     g.set(stairParentRef.current, { display: "block" });
     g.set(".stair", { height: "0%", y: "0%" });
-    g.set(pageRef.current, { opacity: 0, y: 10 });
 
-    const tl = g.timeline();
-    tl.to(".stair", {
-      height: "100%",
-      duration: 0.25,
-      stagger: { amount: 0.12 },
-      ease: "power3.inOut",
-    });
-    tl.call(() => {
-      requestAnimationFrame(() => {
-        void loadGsap().then((g2) => {
-          g2.to(".stair", {
-            y: "100%",
-            duration: 0.25,
-            stagger: { amount: 0.12 },
-            ease: "power3.inOut",
-            onComplete: () => {
-              g2.set(stairParentRef.current, { display: "none" });
-              g2.set(".stair", { y: "0%" });
-              g2.to(pageRef.current, {
-                opacity: 1,
-                y: 0,
-                duration: 0.2,
-                ease: "power2.out",
-                onComplete: () => {
-                  transitioningRef.current = false;
-                  pendingTlRef.current = null;
-                  transitionHandledRef.current = true;
-                },
-              });
-            },
-          });
-        });
+    // Cover
+    await new Promise<void>((resolve) => {
+      g.to(".stair", {
+        height: "100%",
+        duration: 0.35,
+        stagger: { amount: 0.04 },
+        ease: "power3.inOut",
+        onComplete: resolve,
       });
     });
 
-    pendingTlRef.current = tl;
-  }, []);
+    isCoveredRef.current = true;
 
-  // Cover only — panels slide down immediately on link click
+    // Reveal
+    await new Promise<void>((resolve) => {
+      g.to(".stair", {
+        y: "100%",
+        duration: 0.35,
+        stagger: { amount: 0.04 },
+        ease: "power3.inOut",
+        onComplete: resolve,
+      });
+    });
+
+    g.set(stairParentRef.current, { display: "none" });
+    g.set(".stair", { y: "0%" });
+    finishTransition();
+  }, [finishTransition]);
+
+  // Cover only — panels slide down immediately on link click.
+  // Returns a Promise that resolves when the cover animation finishes.
   const coverPage = useCallback(async () => {
     if (isCoveredRef.current) return;
     transitioningRef.current = true;
@@ -106,47 +118,42 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     const g = await loadGsap();
     g.set(stairParentRef.current, { display: "block" });
     g.set(".stair", { height: "0%", y: "0%" });
-    g.set(pageRef.current, { opacity: 0, y: 10 });
 
-    g.to(".stair", {
-      height: "100%",
-      duration: 0.25,
-      stagger: { amount: 0.12 },
-      ease: "power3.inOut",
-      onComplete: () => {
-        isCoveredRef.current = true;
-      },
+    return new Promise<void>((resolve) => {
+      g.to(".stair", {
+        height: "100%",
+        duration: 0.35,
+        stagger: { amount: 0.04 },
+        ease: "power3.inOut",
+        onComplete: () => {
+          isCoveredRef.current = true;
+          resolve();
+        },
+      });
     });
   }, []);
 
-  // Reveal only — panels slide up when new page content is ready
+  // Reveal only — panels slide up when new route content is ready
   const revealPage = useCallback(async () => {
     if (!isCoveredRef.current) return;
 
     const g = await loadGsap();
-    g.to(".stair", {
-      y: "100%",
-      duration: 0.25,
-      stagger: { amount: 0.12 },
-      ease: "power3.inOut",
-      onComplete: () => {
-        g.set(stairParentRef.current, { display: "none" });
-        g.set(".stair", { y: "0%" });
-        g.to(pageRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.2,
-          ease: "power2.out",
-          onComplete: () => {
-            transitioningRef.current = false;
-            pendingTlRef.current = null;
-            isCoveredRef.current = false;
-            transitionHandledRef.current = true;
-          },
-        });
-      },
+    await new Promise<void>((resolve) => {
+      g.to(".stair", {
+        y: "100%",
+        duration: 0.35,
+        stagger: { amount: 0.04 },
+        ease: "power3.inOut",
+        onComplete: resolve,
+      });
     });
-  }, []);
+
+    g.set(stairParentRef.current, { display: "none" });
+    g.set(".stair", { y: "0%" });
+    finishTransition();
+  }, [finishTransition]);
+
+  // ── watcher for back / forward navigation ────────────────────────────────
 
   useLayoutEffect(() => {
     if (initialRef.current) {
@@ -165,39 +172,43 @@ export function Stairs({ children }: { children: React.ReactNode }) {
 
     let killed = false;
 
-    void loadGsap().then((g) => {
+    void loadGsap().then(async (g) => {
       if (killed) return;
 
       g.killTweensOf(".stair");
       g.set(".stair", { height: "100%", y: "0%" });
-      g.set(pageRef.current, { opacity: 0, y: 10 });
 
-      const tl = g.timeline();
-      tl.set(stairParentRef.current, { display: "block" });
-      tl.from(".stair", {
-        height: 0,
-        duration: 0.25,
-        stagger: { amount: 0.12 },
-        ease: "power3.inOut",
+      // Cover
+      g.set(stairParentRef.current, { display: "block" });
+      await new Promise<void>((resolve) => {
+        g.from(".stair", {
+          height: 0,
+          duration: 0.35,
+          stagger: { amount: 0.04 },
+          ease: "power3.inOut",
+          onComplete: resolve,
+        });
       });
-      tl.to(".stair", {
-        y: "100%",
-        duration: 0.25,
-        stagger: { amount: 0.12 },
-        ease: "power3.inOut",
+
+      isCoveredRef.current = true;
+
+      // Reveal
+      await new Promise<void>((resolve) => {
+        g.to(".stair", {
+          y: "100%",
+          duration: 0.35,
+          stagger: { amount: 0.04 },
+          ease: "power3.inOut",
+          onComplete: resolve,
+        });
       });
-      tl.set(stairParentRef.current, { display: "none" });
-      tl.set(".stair", { y: "0%" });
-      tl.to(pageRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.35,
-        ease: "power2.out",
-        onComplete: () => {
-          transitioningRef.current = false;
-          pendingTlRef.current = null;
-        },
-      });
+
+      if (killed) return;
+      g.set(stairParentRef.current, { display: "none" });
+      g.set(".stair", { y: "0%" });
+      transitioningRef.current = false;
+      pendingTlRef.current = null;
+      isCoveredRef.current = false;
     });
 
     return () => {
@@ -205,19 +216,30 @@ export function Stairs({ children }: { children: React.ReactNode }) {
     };
   }, [currentPath]);
 
+  // ── render ───────────────────────────────────────────────────────────────
+
+  const onUrlChange = useCallback(() => {
+    if (skipUrlChangeRef.current) {
+      skipUrlChangeRef.current = false;
+      return;
+    }
+    if (isCoveredRef.current) {
+      // Wait for the next paint frame so the cover animation's final state is
+      // committed to screen before starting the reveal — prevents the cover
+      // looking cut off when TransitionLink fires router.push() synchronously.
+      requestAnimationFrame(() => {
+        void revealPage();
+      });
+    } else {
+      void triggerStairs();
+    }
+  }, [revealPage, triggerStairs]);
+
   return (
-    <StairsContext.Provider value={{ coverPage, triggerStairs }}>
+    <StairsContext.Provider value={{ coverPage, revealPage, triggerStairs }}>
       {/* StairsWatcher uses useSearchParams which requires a Suspense boundary */}
       <Suspense fallback={null}>
-        <StairsWatcher
-          onUrlChange={() => {
-            if (isCoveredRef.current) {
-              void revealPage();
-            } else {
-              void triggerStairs();
-            }
-          }}
-        />
+        <StairsWatcher onUrlChange={onUrlChange} />
       </Suspense>
       <div>
         <div
@@ -225,26 +247,13 @@ export function Stairs({ children }: { children: React.ReactNode }) {
           className="pointer-events-none fixed top-0 z-[100] hidden h-screen w-full"
         >
           <div className="flex h-full w-full" style={{ gap: 0 }}>
-            <div
-              className="stair h-full w-1/5 bg-white"
-              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
-            />
-            <div
-              className="stair h-full w-1/5 bg-white"
-              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
-            />
-            <div
-              className="stair h-full w-1/5 bg-white"
-              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
-            />
-            <div
-              className="stair h-full w-1/5 bg-white"
-              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
-            />
-            <div
-              className="stair h-full w-1/5 bg-white"
-              style={{ outline: "1px solid #fff", outlineOffset: "-1px" }}
-            />
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="stair h-full w-1/5 bg-neutral-950/40 backdrop-blur-sm"
+                style={{ outline: "1px solid var(--color-neutral-800)", outlineOffset: "-1px" }}
+              />
+            ))}
           </div>
         </div>
         <div ref={pageRef}>{children}</div>

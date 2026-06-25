@@ -2,10 +2,9 @@
 "use client";
 
 // Import the tRPC React client for querying cart items and mutating quantities
-// Import Link for client-side navigation to auth and product pages
 import Image from "next/image";
-import Link from "next/link";
 
+import { TransitionLink } from "~/components/ui/TransitionLink";
 import { usePageTitle } from "~/lib/use-page-title";
 // Import useSession to check if the user is authenticated before showing cart
 import { useSession } from "~/lib/use-session";
@@ -39,12 +38,12 @@ export default function CartPage() {
           <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
             Sign in to view your cart
           </p>
-          <Link
+          <TransitionLink
             href="/auth"
             className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             Sign In
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     );
@@ -83,12 +82,12 @@ export default function CartPage() {
             <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
               Your cart is empty
             </p>
-            <Link
+            <TransitionLink
               href="/products"
               className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
             >
               Browse Fragrances
-            </Link>
+            </TransitionLink>
           </div>
         ) : (
           // Cart content layout: 2/3 width for item list, 1/3 for order summary
@@ -128,12 +127,12 @@ export default function CartPage() {
                     <div className="flex flex-1 flex-col justify-between">
                       <div>
                         {/* Product name linking to the product detail page */}
-                        <Link
+                        <TransitionLink
                           href={`/products/${item.product.slug}`}
                           className="font-serif text-lg transition-opacity hover:opacity-60"
                         >
                           {item.product.name}
-                        </Link>
+                        </TransitionLink>
                         {/* Display the selected size in ml */}
                         <p className="mt-1 text-xs text-neutral-400">{item.size}ml</p>
                       </div>
@@ -197,12 +196,12 @@ export default function CartPage() {
                 </div>
                 <div className="mb-6 h-px w-full bg-neutral-200 dark:bg-neutral-800" />
                 {/* Checkout link navigates to the checkout page */}
-                <Link
+                <TransitionLink
                   href="/checkout"
                   className="inline-flex w-full items-center justify-center bg-neutral-950 px-8 py-3 text-center text-sm font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
                 >
                   Checkout
-                </Link>
+                </TransitionLink>
               </div>
             </div>
           </div>

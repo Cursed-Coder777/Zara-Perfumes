@@ -2,14 +2,11 @@
 "use client";
 
 // Import useState for managing shipping form fields
-// Import Link for client-side navigation to the auth page
-import Link from "next/link";
 import { useState } from "react";
 
+import { TransitionLink } from "~/components/ui/TransitionLink";
 import { usePageTitle } from "~/lib/use-page-title";
-// Import useSession to verify the user is authenticated before showing checkout
 import { useSession } from "~/lib/use-session";
-// Import the tRPC React client for querying cart data and creating a checkout session
 import { api } from "~/trpc/react";
 
 // CheckoutPage renders a shipping form and order summary, then creates a Stripe Checkout session on submit
@@ -41,12 +38,12 @@ export default function CheckoutPage() {
           <p className="mb-4 text-sm tracking-widest text-neutral-400 uppercase">
             Sign in to checkout
           </p>
-          <Link
+          <TransitionLink
             href="/auth"
             className="inline-flex items-center justify-center bg-neutral-950 px-8 py-3 text-sm text-xs font-medium tracking-widest text-neutral-50 uppercase transition-all duration-300 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             Sign In
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     );

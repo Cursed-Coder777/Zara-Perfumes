@@ -1,5 +1,6 @@
 import HeroSection from "~/components/hero-section";
 import { ProductCard } from "~/components/product-card";
+import { StickyCard } from "~/components/ui/StickyCard";
 import { TransitionLink } from "~/components/ui/TransitionLink";
 import { api, HydrateClient } from "~/trpc/server";
 
@@ -99,6 +100,17 @@ export default async function Home() {
           </ScrollStackItem>
         </ScrollStack>
       </section> */}
+
+      {/* Gallery showcase — sticky card stack with scroll-triggered animations */}
+      <StickyCard
+        cards={[
+          { id: 1, image: "/images/gallery/gallery-1.jpg", alt: "Perfume gallery 1" },
+          { id: 2, image: "/images/gallery/gallery-2.jpg", alt: "Perfume gallery 2" },
+          { id: 3, image: "/images/gallery/gallery-3.jpg", alt: "Perfume gallery 3" },
+          { id: 4, image: "/images/gallery/gallery-4.jpg", alt: "Perfume gallery 4" },
+          { id: 5, image: "/images/gallery/gallery-5.jpg", alt: "Perfume gallery 5" },
+        ]}
+      />
 
       {/* Call-to-action bottom banner — dark section with "The Essence of You" tagline and a "Shop Now" link */}
       <section className="bg-neutral-950 px-6 py-16 text-neutral-50 md:px-12 md:py-24 lg:px-24 lg:py-32 dark:bg-neutral-50 dark:text-neutral-950">

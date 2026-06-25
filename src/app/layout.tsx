@@ -9,7 +9,7 @@ import { Geist, Playfair_Display } from "next/font/google";
 import { CursorFollower } from "~/components/CursorFollower";
 // Import the Nav component — a fixed top navigation bar with links, cart badge, and auth-aware controls
 import { Nav } from "~/components/nav";
-// Import Stairs for page transition animations
+// Import the Stairs component for GSAP-animated page transitions between routes
 import { Stairs } from "~/components/ui/Stairs";
 // Import the ThemeProvider to support light/dark mode toggling throughout the application
 import { ThemeProvider } from "~/lib/theme-provider";
@@ -60,9 +60,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <TRPCReactProvider>
           {/* ThemeProvider manages light/dark state and applies/removes the "dark" class on <html> */}
           <ThemeProvider>
-            <CursorFollower />
-            {/* Stairs wraps Nav + main so TransitionLink inside Nav can access the context */}
             <Stairs>
+              <CursorFollower />
               {/* Nav receives the session prop to conditionally show sign-in, cart, orders, admin, or sign-out links */}
               <Nav session={session} />
               {/* The <main> element renders the current page's children from the matched route */}

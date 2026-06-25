@@ -1,11 +1,9 @@
 "use client";
 
-"use client";
-
 import { useRouter } from "next/navigation";
-import type { MouseEvent,ReactNode } from "react";
+import { type MouseEvent, type ReactNode, useCallback } from "react";
 
-import { useStairs } from "./Stairs";
+import { useStairs } from "~/components/ui/Stairs";
 
 export function TransitionLink({
   href,
@@ -27,17 +25,24 @@ export function TransitionLink({
   const router = useRouter();
   const { coverPage } = useStairs();
 
-  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    onClick?.(e);
-    void coverPage();
-    router.push(href);
-  };
+  const handleClick = useCallback(
+    async (e: MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      onClick?.(e);
+      // Cover immediately, then navigate — reveal happens on the new page via StairsWatcher
+      await coverPage();
+      router.push(href);
+    },
+    [href, router, coverPage, onClick],
+  );
 
-  const handleMouseEnter = (e: MouseEvent<HTMLAnchorElement>) => {
-    router.prefetch(href);
-    onMouseEnter?.(e);
-  };
+  const handleMouseEnter = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>) => {
+      router.prefetch(href);
+      onMouseEnter?.(e);
+    },
+    [href, router, onMouseEnter],
+  );
 
   return (
     <a
