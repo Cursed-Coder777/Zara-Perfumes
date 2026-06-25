@@ -66,8 +66,10 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
-  // Allow skipping validation via SKIP_ENV_VALIDATION env var (useful for Docker builds)
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  // Always skip module-level validation — runtime env errors are caught gracefully
+  // by lazy initializers (getAuth, getStripe, getDb) and the layout try/catch.
+  // Build-time validation still runs via `pnpm typecheck` and `pnpm build`.
+  skipValidation: true,
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.

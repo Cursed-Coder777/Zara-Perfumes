@@ -8,6 +8,11 @@ import { env } from "~/env";
 
 // Import the entire schema object so Drizzle knows all tables, relations, and types
 import * as schema from "./schema";
+// Import the PostgresJsDatabase type to properly type the lazy Proxy export
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+
+// Capture the concrete DB type with our schema, matching what `drizzle(conn, { schema })` would return
+type Db = PostgresJsDatabase<typeof schema>;
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
@@ -18,10 +23,24 @@ const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
 
-// Reuse an existing connection from the cache or create a new one using the DATABASE_URL environment variable
-const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
-// In non-production environments, stash the connection on globalThis so HMR doesn't exhaust database connections
-if (env.NODE_ENV !== "production") globalForDb.conn = conn;
+// Lazy connection + db — defers postgres() call until first actual query.
+// Prevents module-level crash when DATABASE_URL env var is not set at runtime
+// (e.g., during Vercel cold start before the dashboard env vars are available).
+function getConn(): postgres.Sql {
+  if (!globalForDb.conn) {
+    globalForDb.conn = postgres(env.DATABASE_URL);
+  }
+  return globalForDb.conn;
+}
 
-// Build the Drizzle ORM instance using the postgres connection and the full schema for typed queries
-export const db = drizzle(conn, { schema });
+function getDbInstance() {
+  return drizzle(getConn(), { schema });
+}
+
+// Proxy-based lazy export — db methods resolve on first access, not at import time.
+// This allows modules that import `db` to evaluate without immediately connecting.
+export const db = new Proxy({} as Db, {
+  get(_, prop) {
+    return getDbInstance()[prop as keyof Db];
+  },
+});
